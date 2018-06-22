@@ -39,7 +39,7 @@ from qgis.core import (
     QgsCoordinateReferenceSystem)
 
 from .occurrences import search
-from .species import name_usage, name_backbone
+from .species import name_usage, name_lookup
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'species_explorer_dialog_base.ui'))
@@ -56,17 +56,36 @@ class SpeciesExplorerDialog(QtWidgets.QDialog, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.search_button.clicked.connect(self.find)
-        self.fetch_button.clicked.connect(self.find)
+        self.fetch_button.clicked.connect(self.fetch)
+        self.results_list.itemClicked.connect(self.select)
 
     def find(self):
         """Search GBIF for the species provided."""
-        matches = name_backbone(
-            name=self.search_text.text())
+        QgsMessageLog.logMessage(
+            'Searching for %s' % self.search_text.text(),
+            'SpeciesExplorer',
+            0)
+        matches = name_lookup(
+            q=self.search_text.text(),
+            rank = "species",
+            verbose = True)
+        QgsMessageLog.logMessage(str(matches), 'SpeciesExplorer', 0)
         self.results_list.clear()
-        for match in matches:
+        for match in matches['results']:
             QgsMessageLog.logMessage(str(match), 'SpeciesExplorer', 0)
             self.results_list.addItem(match['canonicalName'])
 
+    def select(self, item):
+        """
+        Event handler for when an item is clicked in the search result lisl.
+        :param item: QListWidgetItem that was clicked
+        :return: 
+        """
+        QgsMessageLog.logMessage(
+            '%s selected' % item.text(),
+            'SpeciesExplorer',
+
+        )
         species = name_usage(3329049)
         self.taxonomy_list.clear()
         # QgsMessageLog.logMessage(str(species), 'SpeciesExplorer', 0)
