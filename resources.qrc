@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/species_explorer" >
+        <file>icon.png</file>
+    </qresource>
+</RCC>
