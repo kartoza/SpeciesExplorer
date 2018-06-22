@@ -14,8 +14,7 @@ __copyright__ = 'Copyright 2018, Kartoza'
 
 import unittest
 
-from PyQt5.QtGui import QDialogButtonBox, QDialog
-
+from qgis.PyQt.QtWidgets import QDialogButtonBox, QDialog
 from species_explorer_dialog import SpeciesExplorerDialog
 
 from utilities import get_qgis_app
