@@ -16,7 +16,5 @@ def name_parser(name, **kwargs):
         'Secale cereale subsp. cereale', 'Secale cereale ssp. cereale',
         'Vanessa atalanta (Linnaeus, 1758)'])
   '''
-  url = gbif_baseurl + 'parser/name'
-  if name.__class__ == str:
-    name = [name]
-  return gbif_POST(url, name, **kwargs)
+  url = gbif_baseurl + 'parser/name?name=' + name
+  return gbif_GET(url, name, **kwargs)

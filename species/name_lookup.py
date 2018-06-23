@@ -1,6 +1,6 @@
 from ..gbifutils import *
 
-def name_lookup(q=None, rank=None, higherTaxonKey=None, status=None, isExtinct=None,
+def 	name_lookup(q=None, rank=None, higherTaxonKey=None, status=None, isExtinct=None,
 	habitat=None, nameType=None, datasetKey=None, nomenclaturalStatus=None,
 	limit=100, offset=None, facet=False, facetMincount=None, facetMultiselect=None,
 	type=None, hl=False, verbose=False, **kwargs):

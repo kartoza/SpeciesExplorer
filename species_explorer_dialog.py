@@ -39,7 +39,7 @@ from qgis.core import (
     QgsCoordinateReferenceSystem)
 
 from .occurrences import search
-from .species import name_usage, name_lookup
+from .species import name_usage, name_lookup, name_parser
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'species_explorer_dialog_base.ui'))
@@ -61,14 +61,18 @@ class SpeciesExplorerDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def find(self):
         """Search GBIF for the species provided."""
+        text = self.search_text.text()
+        parsed_species = name_parser(text)[0]
+        genus = parsed_species['genusOrAbove']
+        species = parsed_species['specificEpithet']
         QgsMessageLog.logMessage(
-            'Searching for %s' % self.search_text.text(),
+            'Searching for %s' % text,
             'SpeciesExplorer',
             0)
         matches = name_lookup(
-            q=self.search_text.text(),
-            rank = "species",
-            verbose = True)
+            genus + ' ' + species,
+            rank='genus',
+            verbose=True)
         QgsMessageLog.logMessage(str(matches), 'SpeciesExplorer', 0)
         self.results_list.clear()
         for match in matches['results']:
