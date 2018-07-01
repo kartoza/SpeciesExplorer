@@ -43,6 +43,7 @@ def gbif_GET(url, args, **kwargs):
     handle, output_path = mkstemp()
     QgsMessageLog.logMessage(
         'gbif_GET outfile: %s' % output_path, 'SpeciesExplorer', 0)
+    QgsMessageLog.logMessage('gbif_GET URL: %s' % url, 'SpeciesExplorer', 0)
     downloader = FileDownloader(url, output_path, progress_dialog)
     downloader.download()
     downloader.write_data()

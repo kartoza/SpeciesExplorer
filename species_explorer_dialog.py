@@ -40,6 +40,7 @@ from qgis.core import (
 
 from .occurrences import search
 from .species import name_usage, name_lookup, name_parser
+from .gbifutils import gbif_GET
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'species_explorer_dialog_base.ui'))
@@ -69,15 +70,22 @@ class SpeciesExplorerDialog(QtWidgets.QDialog, FORM_CLASS):
             'Searching for %s' % text,
             'SpeciesExplorer',
             0)
-        matches = name_lookup(
-            genus + ' ' + species,
-            rank='genus',
-            verbose=True)
+        # https: // www.gbif.org / species / search?q = Protea % 20
+        # repens & rank = SPECIES & qField = SCIENTIFIC & status = ACCEPTED
+        url = (
+            'https://api.gbif.org/v1/species/search?'
+            'q=%s%%20%s&rank=SPECIES&qField=SCIENTIFIC&status=ACCEPTED' % (
+                genus, species))
+        matches = gbif_GET(url, None)
         QgsMessageLog.logMessage(str(matches), 'SpeciesExplorer', 0)
         self.results_list.clear()
+        names = []
         for match in matches['results']:
-            QgsMessageLog.logMessage(str(match), 'SpeciesExplorer', 0)
-            self.results_list.addItem(match['canonicalName'])
+            name = match['canonicalName']
+            if name not in names:
+                QgsMessageLog.logMessage(str(match), 'SpeciesExplorer', 0)
+                self.results_list.addItem(name)
+                names.append(name)
 
     def select(self, item):
         """
@@ -90,6 +98,7 @@ class SpeciesExplorerDialog(QtWidgets.QDialog, FORM_CLASS):
             'SpeciesExplorer',
 
         )
+
         species = name_usage(3329049)
         self.taxonomy_list.clear()
         # QgsMessageLog.logMessage(str(species), 'SpeciesExplorer', 0)
@@ -112,37 +121,61 @@ class SpeciesExplorerDialog(QtWidgets.QDialog, FORM_CLASS):
         Fetch Occurrence records for selected taxon.
         """
         QgsMessageLog.logMessage('Fetching occurrences', 'SpeciesExplorer', 0)
-        species = name_usage(3329049)
-        result = search(taxonKey=species['acceptedKey'])
-        records = result['results']
+        name = self.results_list.selectedItems()[0].text()
 
-        layer = QgsVectorLayer('Point', species['canonicalName'], 'memory')
+        end_of_records = False
+        offset = 0
+        layer = QgsVectorLayer('Point', name, 'memory')
         layer.setCrs(QgsCoordinateReferenceSystem('EPSG:4326'))
         provider = layer.dataProvider()
         layer.startEditing()
-
         id_field = QgsField()
         id_field.setName('id')
         id_field.setType(QVariant.Int)
         id_field.setPrecision(0)
         id_field.setLength(10)
-
         layer.addAttribute(id_field)
+        layer.commitChanges()
 
-        for record in records:
-            if 'decimalLongitude' not in record or \
-                            'decimalLatitude' not in record:
-                continue
-            try:
-                feature = QgsFeature()
-                feature.setGeometry(
-                    QgsGeometry.fromPointXY(QgsPointXY(
-                        record['decimalLongitude'], record['decimalLatitude']
-                    )))
-                feature.setAttributes([0, QVariant(record['identifier'])])
-                provider.addFeatures([feature])
-            except:
-                continue
+        while not end_of_records:
+
+            url = (
+                'https://api.gbif.org/v1/occurrence/search?'
+                'scientificName=%s&offset=%i' % (name, offset))
+            offset += 100
+            result = gbif_GET(url, None)
+            count = int(result['count'])
+            end_of_records = result['endOfRecords']
+            records = result['results']
+
+            QgsMessageLog.logMessage(
+                'Fetching record %s of %s occurrences' % (offset, count),
+                'SpeciesExplorer',
+                0)
+
+            for record in records:
+                if 'decimalLongitude' not in record or \
+                                'decimalLatitude' not in record:
+                    continue
+                try:
+                    feature = QgsFeature()
+                    feature.setGeometry(
+                        QgsGeometry.fromPointXY(QgsPointXY(
+                            record['decimalLongitude'],
+                            record['decimalLatitude']
+                        )))
+                    feature.setAttributes([0, QVariant(record['identifier'])])
+                    provider.addFeatures([feature])
+                except:
+                    continue
+
+            if offset > count:
+                end_of_records = True
+
+            QgsMessageLog.logMessage(
+                'End of records: %s' % end_of_records,
+                'SpeciesExplorer',
+                0)
 
         layer.commitChanges()
         QgsProject.instance().addMapLayer(layer)
