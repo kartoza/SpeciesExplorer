@@ -9,7 +9,7 @@ __author__ = 'Scott Chamberlain'
 __license__ = 'MIT'
 
 # Modified by Tim to use QgsNetworkAccessManager rather
-from PyQt5.QtCore import QUrl
+from qgis.PyQt.QtCore import QUrl
 from qgis.core import QgsNetworkAccessManager
 from qgis.core import QgsMessageLog  # NOQA
 from qgis.PyQt.QtNetwork import  QNetworkRequest
