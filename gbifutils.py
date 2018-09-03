@@ -9,12 +9,11 @@ __author__ = 'Scott Chamberlain'
 __license__ = 'MIT'
 
 # Modified by Tim to use QgsNetworkAccessManager rather
-from PyQt5.QtCore import QUrl
-from qgis.core import QgsNetworkAccessManager
-from qgis.core import QgsMessageLog  # NOQA
-from qgis.PyQt.QtNetwork import  QNetworkRequest
+from qgis.PyQt.QtCore import QUrl, QEventLoop
+from qgis.core import (
+    QgsNetworkAccessManager, QgsMessageLog, QgsFileDownloader)
+from qgis.PyQt.QtNetwork import QNetworkRequest
 
-from .file_downloader import FileDownloader
 from tempfile import mkstemp
 import json
 
@@ -39,14 +38,15 @@ def gbif_search_GET(url, args, **kwargs):
 
 
 def gbif_GET(url, args, **kwargs):
-    progress_dialog = None
     handle, output_path = mkstemp()
     QgsMessageLog.logMessage(
         'gbif_GET outfile: %s' % output_path, 'SpeciesExplorer', 0)
     QgsMessageLog.logMessage('gbif_GET URL: %s' % url, 'SpeciesExplorer', 0)
-    downloader = FileDownloader(url, output_path, progress_dialog)
-    downloader.download()
-    downloader.write_data()
+    loop = QEventLoop()
+    downloader = QgsFileDownloader(QUrl(url), output_path, delayStart=True)
+    downloader.downloadExited.connect(loop.quit)
+    downloader.startDownload()
+    loop.exec_()
     file = open(output_path, 'rt', encoding='utf-8')
     data = file.read()
     file.close()
