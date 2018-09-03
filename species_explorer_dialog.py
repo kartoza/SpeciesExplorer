@@ -38,8 +38,7 @@ from qgis.core import (
     QgsProject,
     QgsCoordinateReferenceSystem)
 
-from .occurrences import search
-from .species import name_usage, name_lookup, name_parser
+from .species import name_usage, name_parser
 from .gbifutils import gbif_GET
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
