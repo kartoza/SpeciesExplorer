@@ -25,6 +25,7 @@
 import os
 
 from qgis.PyQt import uic
+from qgis.PyQt.QtCore import Qt
 from qgis.PyQt import QtWidgets
 from qgis.PyQt.QtCore import QVariant
 
@@ -78,13 +79,21 @@ class SpeciesExplorerDialog(QtWidgets.QDialog, FORM_CLASS):
         matches = gbif_GET(url, None)
         QgsMessageLog.logMessage(str(matches), 'SpeciesExplorer', 0)
         self.results_list.clear()
-        names = []
+        names = {}
         for match in matches['results']:
             name = match['canonicalName']
             if name not in names:
                 QgsMessageLog.logMessage(str(match), 'SpeciesExplorer', 0)
-                self.results_list.addItem(name)
-                names.append(name)
+                speciesItem = QtWidgets.QListWidgetItem(name)
+                if 'nubKey' in match:
+                    taxon_key = match['nubKey']
+                elif 'speciesKey' in match:
+                    taxon_key = match['speciesKey']
+                else:
+                    continue
+                speciesItem.setData(Qt.UserRole, taxon_key)
+                self.results_list.addItem(speciesItem)
+                names[name] = taxon_key
 
     def select(self, item):
         """
@@ -98,7 +107,7 @@ class SpeciesExplorerDialog(QtWidgets.QDialog, FORM_CLASS):
 
         )
 
-        species = name_usage(3329049)
+        species = name_usage(item.data(Qt.UserRole))
         self.taxonomy_list.clear()
         # QgsMessageLog.logMessage(str(species), 'SpeciesExplorer', 0)
         self.taxonomy_list.addItem('Kingdom: %s' % species['kingdom'])
@@ -109,7 +118,11 @@ class SpeciesExplorerDialog(QtWidgets.QDialog, FORM_CLASS):
         self.taxonomy_list.addItem('Genus: %s' % species['genus'])
         self.taxonomy_list.addItem('Species: %s' % species['species'])
         self.taxonomy_list.addItem('Taxon ID: %s' % species['taxonID'])
-        self.taxonomy_list.addItem('Accepted Name: %s' % species['accepted'])
+        try:
+            self.taxonomy_list.addItem(
+                'Accepted Name: %s' % species['accepted'])
+        except:
+            pass
         self.taxonomy_list.addItem(
             'Canonical Name: %s' % species['canonicalName'])
         self.taxonomy_list.addItem(
