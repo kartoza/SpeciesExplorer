@@ -69,7 +69,10 @@ class SpeciesExplorerDialog(QtWidgets.QDialog, FORM_CLASS):
         self.taxonomy_list.clear()
         parsed_species = name_parser(text)[0]
         genus = parsed_species['genusOrAbove']
-        species = parsed_species['specificEpithet']
+        try:
+            species = parsed_species['specificEpithet']
+        except KeyError:
+            species = ''
         QgsMessageLog.logMessage(
             'Searching for %s' % text,
             'SpeciesExplorer',
