@@ -23,14 +23,14 @@
 """
 
 import os
-
+from collections import OrderedDict
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt import QtWidgets
 from qgis.PyQt.QtCore import QVariant
 from qgis.PyQt import QtGui, QtCore
-
+from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.core import QgsApplication
 from qgis.core import QgsMessageLog  # NOQA
 from qgis.core import (
@@ -153,14 +153,8 @@ class SpeciesExplorerDialog(QtWidgets.QDialog, FORM_CLASS):
         layer = QgsVectorLayer('Point', name, 'memory')
         layer.setCrs(QgsCoordinateReferenceSystem('EPSG:4326'))
         provider = layer.dataProvider()
-        layer.startEditing()
-        id_field = QgsField()
-        id_field.setName('id')
-        id_field.setType(QVariant.Int)
-        id_field.setPrecision(0)
-        id_field.setLength(10)
-        layer.addAttribute(id_field)
-        layer.commitChanges()
+        counter = 0
+        first_record_flag = True
 
         while not end_of_records:
 
@@ -177,22 +171,50 @@ class SpeciesExplorerDialog(QtWidgets.QDialog, FORM_CLASS):
                 'Fetching record %s of %s occurrences' % (offset, count),
                 'SpeciesExplorer',
                 0)
-
+            # Will populate this in create_fields call
+            if len(records) == 0:
+                QgsMessageLog.logMessage(
+                    'No records found',
+                    'SpeciesExplorer',
+                    0)
+                QMessageBox.information(
+                    self,
+                    'Species Explorer',
+                    'No records found for %s' % name
+                )
+                return
+            field_lookups = self.create_fields(layer, records[0])
+            QgsMessageLog.logMessage(
+                'Field lookup: %s' % field_lookups,
+                'SpeciesExplorer',
+                0)
             for record in records:
-                if 'decimalLongitude' not in record or \
-                                'decimalLatitude' not in record:
+                QgsMessageLog.logMessage(
+                    'Record: %s' % record,
+                    'SpeciesExplorer',
+                    0)
+                if ('decimalLongitude' not in record or
+                        'decimalLatitude' not in record):
                     continue
-                try:
-                    feature = QgsFeature()
-                    feature.setGeometry(
-                        QgsGeometry.fromPointXY(QgsPointXY(
-                            record['decimalLongitude'],
-                            record['decimalLatitude']
-                        )))
-                    feature.setAttributes([0, QVariant(record['identifier'])])
-                    provider.addFeatures([feature])
-                except:
-                    continue
+
+                feature = QgsFeature()
+                feature.setGeometry(
+                    QgsGeometry.fromPointXY(QgsPointXY(
+                        record['decimalLongitude'],
+                        record['decimalLatitude']
+                    )))
+                attributes = [counter]
+                for key in field_lookups:
+                    try:
+                        attributes.append(record[key])
+                    except KeyError:
+                        # just append an empty item to make sure the list
+                        # size is correct
+                        attributes.append('')
+
+                feature.setAttributes(attributes)
+                provider.addFeatures([feature])
+                counter += 1
 
             if offset > count:
                 end_of_records = True
@@ -210,3 +232,25 @@ class SpeciesExplorerDialog(QtWidgets.QDialog, FORM_CLASS):
             QgsApplication.instance().overrideCursor().shape() == \
             QtCore.Qt.WaitCursor:
             QgsApplication.instance().restoreOverrideCursor()
+
+    def create_fields(self, layer, record):
+        """Create the attributes for the gbif response table."""
+        layer.startEditing()
+        id_field = QgsField()
+        id_field.setName('id')
+        id_field.setType(QVariant.Int)
+        id_field.setPrecision(0)
+        id_field.setLength(10)
+        layer.addAttribute(id_field)
+        # A dict to store the field offeset for each property
+        field_lookups = []
+        for key in record.keys():
+            new_field = QgsField()
+            new_field.setName(key)
+            new_field.setType(QVariant.String)
+            new_field.setLength(255)
+            layer.addAttribute(new_field)
+            field_lookups.append(key)
+
+        layer.commitChanges()
+        return field_lookups
