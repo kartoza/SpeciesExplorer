@@ -24,11 +24,14 @@
 
 import os
 
+
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt import QtWidgets
 from qgis.PyQt.QtCore import QVariant
+from qgis.PyQt import QtGui, QtCore
 
+from qgis.core import QgsApplication
 from qgis.core import QgsMessageLog  # NOQA
 from qgis.core import (
     QgsField,
@@ -63,6 +66,7 @@ class SpeciesExplorerDialog(QtWidgets.QDialog, FORM_CLASS):
     def find(self):
         """Search GBIF for the species provided."""
         text = self.search_text.text()
+        self.taxonomy_list.clear()
         parsed_species = name_parser(text)[0]
         genus = parsed_species['genusOrAbove']
         species = parsed_species['specificEpithet']
@@ -126,12 +130,15 @@ class SpeciesExplorerDialog(QtWidgets.QDialog, FORM_CLASS):
         self.taxonomy_list.addItem(
             'Canonical Name: %s' % species['canonicalName'])
         self.taxonomy_list.addItem(
-            'Accepted Key: %s' % species['acceptedKey'])
+            'Accepted Key: %s' % item.data(Qt.UserRole))
 
     def fetch(self):
         """
         Fetch Occurrence records for selected taxon.
         """
+        QgsApplication.instance().setOverrideCursor(
+            QtGui.QCursor(QtCore.Qt.WaitCursor)
+        )
         QgsMessageLog.logMessage('Fetching occurrences', 'SpeciesExplorer', 0)
         name = self.results_list.selectedItems()[0].text()
 
@@ -191,3 +198,9 @@ class SpeciesExplorerDialog(QtWidgets.QDialog, FORM_CLASS):
 
         layer.commitChanges()
         QgsProject.instance().addMapLayer(layer)
+
+        # recursively walk back the cursor to a pointer
+        while QgsApplication.instance().overrideCursor() is not None and \
+            QgsApplication.instance().overrideCursor().shape() == \
+            QtCore.Qt.WaitCursor:
+            QgsApplication.instance().restoreOverrideCursor()
