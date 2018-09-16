@@ -88,7 +88,10 @@ class SpeciesExplorerDialog(QtWidgets.QDialog, FORM_CLASS):
         self.results_list.clear()
         names = {}
         for match in matches['results']:
-            name = match['canonicalName']
+            try:
+                name = match['canonicalName']
+            except KeyError:
+                continue
             if name not in names:
                 QgsMessageLog.logMessage(str(match), 'SpeciesExplorer', 0)
                 speciesItem = QtWidgets.QListWidgetItem(name)
