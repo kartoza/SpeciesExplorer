@@ -18,6 +18,9 @@ The plugin will create an in-memory layer for each search result. The attribute 
 
 You can install the plugin from the QGIS plugin repository as shown in the above video. Alternatively you can get the release zip file from the [releases page](https://github.com/kartoza/SpeciesExplorer/releases) and install it using the 'Install from Zip' in the QGIS plugin manager tab.
 
+<img width="875" alt="screen shot 2018-09-17 at 07 27 42" src="https://user-images.githubusercontent.com/178003/45607302-ced24380-ba4b-11e8-8d86-b6020d109b87.png">
+
+
 # Contributing and reporting issues
 
 I would welcome any contributions, please do so via a [pull request](https://github.com/kartoza/SpeciesExplorer/pulls). If you encounter any bugs with the plugin, please file an [issue](https://github.com/kartoza/SpeciesExplorer/issues).
