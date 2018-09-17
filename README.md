@@ -4,6 +4,7 @@ SpeciesExplorer is a QGIS (3 or greater) plugin for quickly retrieving species o
 
 [![IMAGE ALT TEXT](http://img.youtube.com/vi/La2ml0yDW6M/0.jpg)](http://www.youtube.com/watch?v=La2ml0yDW6M "Species Explorer")
 
+
 # Goals
 
 I  published a plugin about 8 years ago that fetched GBIF data in QGIS. It was part of a toolkit for running [openModeller](http://openmodeller.sourceforge.net) for performing ecological niche modelling. But the plugin was written in C++ and not easy to maintain or distribute to different platforms. I am aiming to eventually re-instate openModeller support in QGIS but using an approach that makes it more broadly accessible. The plugin will fetch the openModeller C++ compiled binary for your platform and the rest will be written in python to make it easier to maintain and extend (and hopefully garner contributions from others). 
