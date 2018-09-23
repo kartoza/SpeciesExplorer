@@ -21,6 +21,7 @@ from qgis.core import (
     QgsRasterLayer)
 
 from test.utilities import get_qgis_app
+
 QGIS_APP = get_qgis_app()
 
 

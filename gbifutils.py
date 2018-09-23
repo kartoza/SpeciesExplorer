@@ -8,11 +8,10 @@ __title__ = 'pygbif'
 __author__ = 'Scott Chamberlain'
 __license__ = 'MIT'
 
-# Modified by Tim to use QgsNetworkAccessManager rather
+# Original logic by Scott Chaimberlain, extracted from his pygbif repo
+# Modified by Tim and Etienne to use QgsNetworkAccessManager rather
 from qgis.PyQt.QtCore import QUrl, QEventLoop
-from qgis.core import (
-    QgsNetworkAccessManager, QgsMessageLog, QgsFileDownloader)
-from qgis.PyQt.QtNetwork import QNetworkRequest
+from qgis.core import QgsMessageLog, QgsFileDownloader
 
 from tempfile import mkstemp
 import json

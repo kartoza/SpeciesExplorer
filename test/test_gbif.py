@@ -14,6 +14,9 @@ __copyright__ = 'Copyright 2018, Kartoza'
 
 import unittest
 from gbifutils import name_usage
+from test.utilities import get_qgis_app
+
+QGIS_APP = get_qgis_app()
 
 
 class TestGBIF(unittest.TestCase):
