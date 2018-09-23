@@ -126,7 +126,7 @@ LangString WELCOME_TEXT ${LANG_ENGLISH} "This setup tool will guide you through 
 # start default section
 Section
     ;Added by Tim to set the reg key so that the plugin is enabled by default
-    WriteRegStr HKEY_CURRENT_USER "Software\QGIS\QGIS2\PythonPlugins" "SpeciesExplorer" "true"
+    WriteRegStr HKEY_CURRENT_USER "Software\QGIS\QGIS3\PythonPlugins" "SpeciesExplorer" "true"
 
     SetOutPath $INSTDIR
     File /r /tmp/nsis-data/SpeciesExplorer/*

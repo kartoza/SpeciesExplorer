@@ -14,10 +14,8 @@ __copyright__ = 'Copyright 2018, Kartoza'
 
 import unittest
 
-from qgis.PyQt.QtWidgets import QDialogButtonBox, QDialog
 from species_explorer_dialog import SpeciesExplorerDialog
-
-from utilities import get_qgis_app
+from test.utilities import get_qgis_app
 QGIS_APP = get_qgis_app()
 
 
@@ -32,20 +30,14 @@ class SpeciesExplorerDialogTest(unittest.TestCase):
         """Runs after each test."""
         self.dialog = None
 
-    def test_dialog_ok(self):
+    def test_dialog_find(self):
         """Test we can click OK."""
-
-        button = self.dialog.button_box.button(QDialogButtonBox.Ok)
+        self.dialog.search_text.setText('Acacia saligna')
+        button = self.dialog.search_button
         button.click()
-        result = self.dialog.result()
-        self.assertEqual(result, QDialog.Accepted)
+        result = self.dialog.results_list.item(0).text()
+        self.assertEqual(result, 'Acacia saligna')
 
-    def test_dialog_cancel(self):
-        """Test we can click cancel."""
-        button = self.dialog.button_box.button(QDialogButtonBox.Cancel)
-        button.click()
-        result = self.dialog.result()
-        self.assertEqual(result, QDialog.Rejected)
 
 if __name__ == "__main__":
     suite = unittest.makeSuite(SpeciesExplorerDialogTest)

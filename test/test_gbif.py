@@ -13,7 +13,7 @@ __date__ = '2018-06-22'
 __copyright__ = 'Copyright 2018, Kartoza'
 
 import unittest
-from species import name_usage
+from gbifutils import name_usage
 
 
 class TestGBIF(unittest.TestCase):

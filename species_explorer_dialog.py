@@ -42,8 +42,8 @@ from qgis.core import (
     QgsProject,
     QgsCoordinateReferenceSystem)
 
-from .species import name_usage, name_parser
-from .gbifutils import gbif_GET
+from gbifutils import name_parser, name_usage
+from gbifutils import gbif_GET
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'species_explorer_dialog_base.ui'))
@@ -154,7 +154,6 @@ class SpeciesExplorerDialog(QtWidgets.QDialog, FORM_CLASS):
         layer.setCrs(QgsCoordinateReferenceSystem('EPSG:4326'))
         provider = layer.dataProvider()
         counter = 0
-        first_record_flag = True
 
         while not end_of_records:
 

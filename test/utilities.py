@@ -23,10 +23,10 @@ def get_qgis_app():
     """
 
     try:
-        from qgis.PyQt import QtGui, QtCore
+        from qgis.PyQt import QtGui, QtCore, QtWidgets
         from qgis.core import QgsApplication
         from qgis.gui import QgsMapCanvas
-        from .qgis_interface import QgisInterface
+        from qgis.testing import start_app
     except ImportError:
         return None, None, None, None
 
@@ -35,16 +35,14 @@ def get_qgis_app():
     if QGIS_APP is None:
         gui_flag = True  # All test will run qgis in gui mode
         #noinspection PyPep8Naming
-        QGIS_APP = QgsApplication(sys.argv, gui_flag)
-        # Make sure QGIS_PREFIX_PATH is set in your env if needed!
-        QGIS_APP.initQgis()
+        QGIS_APP = start_app()
         s = QGIS_APP.showSettings()
         LOGGER.debug(s)
 
     global PARENT  # pylint: disable=W0603
     if PARENT is None:
         #noinspection PyPep8Naming
-        PARENT = QtGui.QWidget()
+        PARENT = QtWidgets.QWidget()
 
     global CANVAS  # pylint: disable=W0603
     if CANVAS is None:
@@ -54,6 +52,7 @@ def get_qgis_app():
 
     global IFACE  # pylint: disable=W0603
     if IFACE is None:
+        from test.qgis_interface import QgisInterface
         # QgisInterface is a stub implementation of the QGIS plugin interface
         #noinspection PyPep8Naming
         IFACE = QgisInterface(CANVAS)

@@ -19,7 +19,7 @@ from qgis.PyQt.QtGui import QIcon
 
 
 class SpeciesExplorerDialogTest(unittest.TestCase):
-    """Test rerources work."""
+    """Test resources work."""
 
     def setUp(self):
         """Runs before each test."""
