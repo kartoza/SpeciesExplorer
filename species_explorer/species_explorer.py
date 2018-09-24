@@ -168,7 +168,14 @@ class SpeciesExplorer:
             text=self.tr(u'Species Explorer'),
             callback=self.run,
             parent=self.iface.mainWindow())
-
+        # Only show the tests menubar item if we have a source check out
+        # determined to be true if the tests directory is present...
+        if os.path.exists(os.path.dirname(__file__) + '/tests/'):
+            self.add_action(
+                icon_path,
+                text=self.tr(u'Species Explorer Tests'),
+                callback=self.run_tests,
+                parent=self.iface.mainWindow())
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
@@ -192,3 +199,22 @@ class SpeciesExplorer:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
             pass
+
+    def run_tests(self):
+        """Run unit tests in the python console."""
+        from qgis.PyQt.QtWidgets import QDockWidget
+        main_window = self.iface.mainWindow()
+        action = main_window.findChild(QAction, 'mActionShowPythonDialog')
+        action.trigger()
+        package = 'test'
+        for child in main_window.findChildren(QDockWidget, 'PythonConsole'):
+            if child.objectName() == 'PythonConsole':
+                child.show()
+                for widget in child.children():
+                    if 'PythonConsoleWidget' in str(widget.__class__):
+                        # print "Console widget found"
+                        shell = widget.shell
+                        shell.runCommand(
+                            'from SpeciesExplorer.test_suite import test_package')
+                        shell.runCommand('test_package(\'%s\')' % package)
+                        break
