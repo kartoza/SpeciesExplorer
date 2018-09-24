@@ -13,7 +13,8 @@ __date__ = '2018-06-22'
 __copyright__ = 'Copyright 2018, Kartoza'
 
 import unittest
-from gbifutils import name_usage
+
+from species_explorer.gbifutils import name_usage
 from test.utilities import get_qgis_app
 
 QGIS_APP = get_qgis_app()

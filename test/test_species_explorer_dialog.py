@@ -14,8 +14,9 @@ __copyright__ = 'Copyright 2018, Kartoza'
 
 import unittest
 
-from species_explorer_dialog import SpeciesExplorerDialog
+from species_explorer.species_explorer_dialog import SpeciesExplorerDialog
 from test.utilities import get_qgis_app
+
 QGIS_APP = get_qgis_app()
 
 

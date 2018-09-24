@@ -23,16 +23,14 @@
 """
 
 import os
-from collections import OrderedDict
 
-from qgis.PyQt import uic
-from qgis.PyQt.QtCore import Qt
-from qgis.PyQt import QtWidgets
-from qgis.PyQt.QtCore import QVariant
 from qgis.PyQt import QtGui, QtCore
+from qgis.PyQt import QtWidgets
+from qgis.PyQt import uic
+from qgis.PyQt.QtCore import QVariant
+from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.core import QgsApplication
-from qgis.core import QgsMessageLog  # NOQA
 from qgis.core import (
     QgsField,
     QgsVectorLayer,
@@ -41,9 +39,9 @@ from qgis.core import (
     QgsGeometry,
     QgsProject,
     QgsCoordinateReferenceSystem)
+from qgis.core import QgsMessageLog  # NOQA
 
-from gbifutils import name_parser, name_usage
-from gbifutils import gbif_GET
+from species_explorer.gbifutils import name_parser, name_usage, gbif_GET
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'species_explorer_dialog_base.ui'))

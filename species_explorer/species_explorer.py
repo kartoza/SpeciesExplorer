@@ -86,7 +86,6 @@ class SpeciesExplorer:
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
         return QCoreApplication.translate('SpeciesExplorer', message)
 
-
     def add_action(
         self,
         icon_path,

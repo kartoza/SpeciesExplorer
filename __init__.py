@@ -23,6 +23,10 @@
  This script initializes the plugin, making it known to QGIS.
 """
 
+import sys
+import os
+sys.path.append(os.path.dirname(__file__))
+
 
 # noinspection PyPep8Naming
 def classFactory(iface):  # pylint: disable=invalid-name
@@ -32,5 +36,5 @@ def classFactory(iface):  # pylint: disable=invalid-name
     :type iface: QgsInterface
     """
     #
-    from .species_explorer import SpeciesExplorer
+    from species_explorer.species_explorer import SpeciesExplorer
     return SpeciesExplorer(iface)
