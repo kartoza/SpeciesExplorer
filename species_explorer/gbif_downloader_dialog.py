@@ -47,13 +47,13 @@ from qgis.core import QgsMessageLog  # NOQA
 from species_explorer.gbifutils import name_parser, name_usage, gbif_GET
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'species_explorer_dialog_base.ui'))
+    os.path.dirname(__file__), 'gbif_downloader_dialog_base.ui'))
 
 
-class SpeciesExplorerDialog(QtWidgets.QDialog, FORM_CLASS):
+class GBIFDownloaderDialog(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, parent=None):
         """Constructor."""
-        super(SpeciesExplorerDialog, self).__init__(parent)
+        super(GBIFDownloaderDialog, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
         # self.<objectname>, and you can use autoconnect slots - see

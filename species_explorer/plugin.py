@@ -28,7 +28,7 @@ from qgis.PyQt.QtWidgets import QAction
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
-from .species_explorer_dialog import SpeciesExplorerDialog
+from .gbif_downloader_dialog import GBIFDownloaderDialog
 from .openmodeller_dialog import OpenModellerDialog
 import os.path
 
@@ -195,7 +195,7 @@ class SpeciesExplorer:
         """Run method that performs all the real work"""
         # show the dialog
         # Create the dialog (after translation) and keep reference
-        gbif_dialog = SpeciesExplorerDialog()
+        gbif_dialog = GBIFDownloaderDialog()
         # Run the dialog event loop
         result = gbif_dialog.exec_()
         # See if OK was pressed

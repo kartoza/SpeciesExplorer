@@ -24,8 +24,10 @@
 """
 
 import os
+import sys
+from subprocess import call, CalledProcessError
 from qgis.PyQt import QtWidgets
-from qgis.core import QgsProject
+from qgis.core import QgsProject, QgsMessageLog
 from qgis.PyQt import uic
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'openmodeller_dialog_base.ui'))
@@ -50,4 +52,38 @@ class OpenModellerDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def run(self):
         """Run openModeller with the current point file."""
-        pass
+        openmodeller_path = os.path.dirname(__file__)
+        openmodeller_path = os.path.abspath(os.path.join(
+            openmodeller_path, '..', 'openmodeller', 'bin'))
+        binary = os.path.join(openmodeller_path, 'om_console')
+
+    def _run_command(self, command):
+        """Run a command and raise any error as needed.
+
+        This is a simple runner for executing gdal commands.
+
+        :param command: A command string to be run.
+        :type command: str
+
+        :raises: Any exceptions will be propagated.
+        """
+        try:
+            my_result = call(command, shell=True)
+            del my_result
+        except CalledProcessError as e:
+            QgsMessageLog.logMessage(
+                'Running command failed %s' % command,
+                'SpeciesExplorer',
+                0)
+            message = (
+                'Error while executing the following shell '
+                'command: %s\nError message: %s' % (command, str(e)))
+            # shameless hack - see https://github.com/AIFDR/inasafe/issues/141
+            if sys.platform == 'darwin':  # Mac OS X
+                if 'Errno 4' in str(e):
+                    # continue as the error seems to be non critical
+                    pass
+                else:
+                    raise Exception(message)
+            else:
+                raise Exception(message)

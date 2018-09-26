@@ -14,7 +14,7 @@ __copyright__ = 'Copyright 2018, Kartoza'
 
 import unittest
 
-from species_explorer.species_explorer_dialog import SpeciesExplorerDialog
+from species_explorer.gbif_downloader_dialog import GBIFDownloaderDialog
 from test.utilities import get_qgis_app
 
 QGIS_APP = get_qgis_app()
@@ -25,7 +25,7 @@ class SpeciesExplorerDialogTest(unittest.TestCase):
 
     def setUp(self):
         """Runs before each test."""
-        self.dialog = SpeciesExplorerDialog(None)
+        self.dialog = GBIFDownloaderDialog(None)
 
     def tearDown(self):
         """Runs after each test."""

@@ -36,5 +36,5 @@ def classFactory(iface):  # pylint: disable=invalid-name
     :type iface: QgsInterface
     """
     #
-    from species_explorer.species_explorer import SpeciesExplorer
+    from species_explorer.plugin import SpeciesExplorer
     return SpeciesExplorer(iface)

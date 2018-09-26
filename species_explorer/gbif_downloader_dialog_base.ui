@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SpeciesExplorerDialogBase</class>
- <widget class="QDialog" name="SpeciesExplorerDialogBase">
+ <class>GBIFDownloaderDialogBase</class>
+ <widget class="QDialog" name="GBIFDownloaderDialogBase">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Species Explorer</string>
+   <string>GBIF Downloader</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
@@ -88,7 +88,7 @@
   <connection>
    <sender>button_box</sender>
    <signal>accepted()</signal>
-   <receiver>SpeciesExplorerDialogBase</receiver>
+   <receiver>GBIFDownloaderDialogBase</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -104,7 +104,7 @@
   <connection>
    <sender>button_box</sender>
    <signal>rejected()</signal>
-   <receiver>SpeciesExplorerDialogBase</receiver>
+   <receiver>GBIFDownloaderDialogBase</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
