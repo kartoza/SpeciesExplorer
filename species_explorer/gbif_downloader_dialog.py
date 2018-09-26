@@ -95,15 +95,15 @@ class GBIFDownloaderDialog(QtWidgets.QDialog, FORM_CLASS):
                 continue
             if name not in names:
                 QgsMessageLog.logMessage(str(match), 'SpeciesExplorer', 0)
-                speciesItem = QtWidgets.QListWidgetItem(name)
+                item = QtWidgets.QListWidgetItem(name)
                 if 'nubKey' in match:
                     taxon_key = match['nubKey']
                 elif 'speciesKey' in match:
                     taxon_key = match['speciesKey']
                 else:
                     continue
-                speciesItem.setData(Qt.UserRole, taxon_key)
-                self.results_list.addItem(speciesItem)
+                item.setData(Qt.UserRole, taxon_key)
+                self.results_list.addItem(item)
                 names[name] = taxon_key
 
     def select(self, item):
