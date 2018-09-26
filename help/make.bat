@@ -30,7 +30,7 @@ if "%1" == "help" (
 	echo.  man        to make manual pages
 	echo.  changes    to make an overview over all changed/added/deprecated items
 	echo.  linkcheck  to check all external links for integrity
-	echo.  doctest    to run all doctests embedded in the documentation if enabled
+	echo.  doctest    to gbif_downloader all doctests embedded in the documentation if enabled
 	goto end
 )
 
@@ -78,7 +78,7 @@ if "%1" == "json" (
 if "%1" == "htmlhelp" (
 	%SPHINXBUILD% -b htmlhelp %ALLSPHINXOPTS% %BUILDDIR%/htmlhelp
 	echo.
-	echo.Build finished; now you can run HTML Help Workshop with the ^
+	echo.Build finished; now you can gbif_downloader HTML Help Workshop with the ^
 .hhp project file in %BUILDDIR%/htmlhelp.
 	goto end
 )
@@ -86,7 +86,7 @@ if "%1" == "htmlhelp" (
 if "%1" == "qthelp" (
 	%SPHINXBUILD% -b qthelp %ALLSPHINXOPTS% %BUILDDIR%/qthelp
 	echo.
-	echo.Build finished; now you can run "qcollectiongenerator" with the ^
+	echo.Build finished; now you can gbif_downloader "qcollectiongenerator" with the ^
 .qhcp project file in %BUILDDIR%/qthelp, like this:
 	echo.^> qcollectiongenerator %BUILDDIR%\qthelp\template_class.qhcp
 	echo.To view the help file:

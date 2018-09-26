@@ -29,6 +29,7 @@ from qgis.PyQt.QtWidgets import QAction
 from .resources import *
 # Import the code for the dialog
 from .species_explorer_dialog import SpeciesExplorerDialog
+from .openmodeller_dialog import OpenModellerDialog
 import os.path
 
 
@@ -40,7 +41,7 @@ class SpeciesExplorer:
 
         :param iface: An interface instance that will be passed to this class
             which provides the hook by which you can manipulate the QGIS
-            application at run time.
+            application at gbif_downloader time.
         :type iface: QgsInterface
         """
         # Save reference to the QGIS interface
@@ -60,9 +61,6 @@ class SpeciesExplorer:
 
             if qVersion() > '4.3.3':
                 QCoreApplication.installTranslator(self.translator)
-
-        # Create the dialog (after translation) and keep reference
-        self.dlg = SpeciesExplorerDialog()
 
         # Declare instance attributes
         self.actions = []
@@ -165,8 +163,14 @@ class SpeciesExplorer:
         icon_path = ':/plugins/species_explorer/icon.png'
         self.add_action(
             icon_path,
-            text=self.tr(u'Species Explorer'),
-            callback=self.run,
+            text=self.tr(u'GBIF Downloader'),
+            callback=self.gbif_downloader,
+            parent=self.iface.mainWindow())
+        icon_path = ':/plugins/species_explorer/icon.png'
+        self.add_action(
+            icon_path,
+            text=self.tr(u'openModeller'),
+            callback=self.openmodeller,
             parent=self.iface.mainWindow())
         # Only show the tests menubar item if we have a source check out
         # determined to be true if the tests directory is present...
@@ -187,19 +191,30 @@ class SpeciesExplorer:
         # remove the toolbar
         del self.toolbar
 
-
-    def run(self):
+    def gbif_downloader(self):
         """Run method that performs all the real work"""
         # show the dialog
-        self.dlg.show()
+        # Create the dialog (after translation) and keep reference
+        gbif_dialog = SpeciesExplorerDialog()
         # Run the dialog event loop
-        result = self.dlg.exec_()
+        result = gbif_dialog.exec_()
         # See if OK was pressed
         if result:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
             pass
 
+    def openmodeller(self):
+        """Show the openModeller Dialog"""
+        # show the dialog
+        openmodeller_dialog = OpenModellerDialog()
+        # Run the dialog event loop
+        result = openmodeller_dialog.exec_()
+        # See if OK was pressed
+        if result:
+            # Do something useful here - delete the line containing pass and
+            # substitute with your code.
+            pass
     def run_tests(self):
         """Run unit tests in the python console."""
         from qgis.PyQt.QtWidgets import QDockWidget

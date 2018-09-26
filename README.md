@@ -30,7 +30,7 @@ I would welcome any contributions, please do so via a [pull request](https://git
 
 ## MacOS
 
-If you are trying to run tests on macOS and PyCharm you may need to explcitly
+If you are trying to gbif_downloader tests on macOS and PyCharm you may need to explcitly
 set the QGIS_PREFIX_PATH environment variable. Edit the
 
 ```Run -> Edit Configurations -> Defaults -> Python Tests -> UnitTests```

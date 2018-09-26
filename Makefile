@@ -46,7 +46,7 @@ PY_FILES = \
 	__init__.py \
 	species_explorer.py species_explorer_dialog.py
 
-UI_FILES = species_explorer_dialog_base.ui
+UI_FILES = species_explorer_dialog_base.ui openmodeller_dialog_base.ui
 
 EXTRAS = metadata.txt icon.png
 
@@ -65,7 +65,7 @@ HELP = help/build/html
 
 PLUGIN_UPLOAD = $(c)/plugin_upload.py
 
-RESOURCE_SRC=$(shell grep '^ *<file' resources.qrc | sed 's@</file>@@g;s/.*>//g' | tr '\n' ' ')
+RESOURCE_SRC=$(shell grep '^ *<file' species_explorer/resources.qrc | sed 's@</file>@@g;s/.*>//g' | tr '\n' ' ')
 
 QGISDIR=.qgis2
 
@@ -73,8 +73,8 @@ default: compile
 
 compile: $(COMPILED_RESOURCE_FILES)
 
-%.py : %.qrc $(RESOURCES_SRC)
-	pyrcc5 -o $*.py  $<
+%.py : species_explorer/%.qrc $(RESOURCES_SRC)
+	pyrcc5 -o species_explorer/$*.py  $<
 
 %.qm : %.ts
 	$(LRELEASE) $<
@@ -93,8 +93,8 @@ test: compile transcompile
 		3>&1 1>&2 2>&3 3>&- || true
 	@echo "----------------------"
 	@echo "If you get a 'no module named qgis.core error, try sourcing"
-	@echo "the helper script we have provided first then run make test."
-	@echo "e.g. source run-env-linux.sh <path to qgis install>; make test"
+	@echo "the helper script we have provided first then gbif_downloader make test."
+	@echo "e.g. source gbif_downloader-env-linux.sh <path to qgis install>; make test"
 	@echo "----------------------"
 
 deploy: compile doc transcompile
@@ -211,8 +211,8 @@ pylint:
 	@echo
 	@echo "----------------------"
 	@echo "If you get a 'no module named qgis.core' error, try sourcing"
-	@echo "the helper script we have provided first then run make pylint."
-	@echo "e.g. source run-env-linux.sh <path to qgis install>; make pylint"
+	@echo "the helper script we have provided first then gbif_downloader make pylint."
+	@echo "e.g. source gbif_downloader-env-linux.sh <path to qgis install>; make pylint"
 	@echo "----------------------"
 
 
