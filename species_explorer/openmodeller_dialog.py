@@ -25,6 +25,7 @@
 
 import os
 from qgis.PyQt import QtWidgets
+from qgis.core import QgsProject
 from qgis.PyQt import uic
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'openmodeller_dialog_base.ui'))
@@ -43,6 +44,9 @@ class OpenModellerDialog(QtWidgets.QDialog, FORM_CLASS):
         self.ok_button = self.button_box.button(
             QtWidgets.QDialogButtonBox.Ok)
         self.ok_button.clicked.connect(self.run)
+        layers = QgsProject.instance().mapLayers()
+        for layer in layers:
+            self.dialog.point_layers.addItem(layer.name())
 
     def run(self):
         """Run openModeller with the current point file."""

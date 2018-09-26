@@ -32,13 +32,16 @@ from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.core import QgsApplication
 from qgis.core import (
-    QgsField,
-    QgsVectorLayer,
-    QgsFeature,
+    QgsFields,
     QgsPointXY,
     QgsGeometry,
     QgsProject,
-    QgsCoordinateReferenceSystem)
+    QgsCoordinateReferenceSystem,
+    QgsFeature,
+    QgsField,
+    QgsWkbTypes,
+    QgsMemoryProviderUtils,
+)
 from qgis.core import QgsMessageLog  # NOQA
 
 from species_explorer.gbifutils import name_parser, name_usage, gbif_GET
@@ -148,8 +151,12 @@ class SpeciesExplorerDialog(QtWidgets.QDialog, FORM_CLASS):
 
         end_of_records = False
         offset = 0
-        layer = QgsVectorLayer('Point', name, 'memory')
-        layer.setCrs(QgsCoordinateReferenceSystem('EPSG:4326'))
+        layer = QgsMemoryProviderUtils.createMemoryLayer(
+            name=name,
+            fields=QgsFields(),
+            geometryType=QgsWkbTypes.Point,
+            crs=QgsCoordinateReferenceSystem('EPSG:4326'))
+        layer.dataProvider().createSpatialIndex()
         provider = layer.dataProvider()
         counter = 0
 
