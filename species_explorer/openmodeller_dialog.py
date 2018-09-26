@@ -49,12 +49,13 @@ class OpenModellerDialog(QtWidgets.QDialog, FORM_CLASS):
             QtWidgets.QDialogButtonBox.Ok)
         self.ok_button.clicked.connect(self.run)
         self.algorithm.currentIndexChanged.connect(self._show_parameters)
+        self.point_layers.currentIndexChanged.connect(self._update_fields)
         self._populate_point_layer_combo()
         self._populate_algorithm_combo()
 
     def run(self):
         """Run openModeller with the current point layer."""
-        layer_id = self.dialog.point_layers.currentItem().data(Qt.UserRole)
+        layer_id = self.point_layers.currentItem().data(Qt.UserRole)
         layer = QgsProject.instance().mapLayer(layerId=layer_id)
         QgsMessageLog.logMessage(
             'openModeller analysis using layer: %s' % layer.name(),
@@ -65,6 +66,15 @@ class OpenModellerDialog(QtWidgets.QDialog, FORM_CLASS):
             openmodeller_path, '..', 'openmodeller', 'bin'))
         binary = os.path.join(openmodeller_path, 'om_console')
         self._run_command(binary)
+
+    def _update_fields(self, index):
+        """Update the list of fields available for the selected point layer."""
+        layer_id = self.point_layers.itemData(index)
+        layer = QgsProject.instance().mapLayer(layerId=layer_id)
+        fields = layer.fields()
+        self.taxon_column.clear()
+        for field in fields:
+            self.taxon_column.addItem(field.name())
 
     def _show_parameters(self, index):
         """Update the parametrs widget based on selected algorithm."""
