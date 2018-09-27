@@ -91,11 +91,47 @@ class OpenModellerDialog(QtWidgets.QDialog, FORM_CLASS):
             )
             occurrence_file.write(line)
         occurrence_file.close()
+        # Now prepare the config file
+        rasters = []
+        for item in self.raster_layers.selectedItems():
+            layer_id = item.data(Qt.UserRole)
+            layer = QgsProject.instance().mapLayer(layerId=layer_id)
+            source = layer.source()
+            rasters.append(source)
+        request_file = open('/tmp/request.txt', 'wt')
+        request_file.writelines(
+        """
+WKT Coord System = GEOGCS["WGS84", DATUM["WGS84", SPHEROID["WGS84", 6378137.0, 298.257223563]], PRIMEM["Greenwich", 0.0], UNIT["degree", 0.017453292519943295], AXIS["Longitude",EAST], AXIS["Latitude",NORTH]]
+Output file type = GreyTiff
+Spatially unique = true
+Environmentally unique = true\n
+        """)
+        request_file.write('Occurrences source = %s\n' % occurrence_file.name)
+        request_file.write('Occurrences group = %s\n' % taxon)
+        for layer in rasters:
+            # We will use the same layers for both
+            # model creation and projection
+            request_file.write('Map = %s\n' % layer)
+            request_file.write('Output map = %s\n' % layer)
+        # Just use the first raster as mask for now
+        request_file.write('Mask = %s\n' % rasters[0])
+        request_file.write('Output mask = %s\n' % rasters[0])
+        # This determines the cell size and extents
+        request_file.write('Output format = %s\n' % rasters[0])
+        # Serialise the model created by openModeller
+        request_file.write('Output model = /tmp/model.xml\n')
+        # Name of georeferenced output
+        request_file.write('Output file = /tmp/model.tif\n')
+        # Now write the algorithm name and parameters
+        request_file.write(self.algorithm_parameters.toPlainText())
+
+        request_file.close()
+
         openmodeller_path = os.path.dirname(__file__)
         openmodeller_path = os.path.abspath(os.path.join(
             openmodeller_path, '..', 'openmodeller', 'bin'))
         binary = os.path.join(openmodeller_path, 'om_console')
-        self._run_command(binary)
+        self._run_command(binary + ' /tmp/request.txt')
 
     def _update_fields(self, index):
         """Update the list of fields available for the selected point layer."""
