@@ -29,7 +29,12 @@ from collections import OrderedDict
 from subprocess import call, CalledProcessError
 from qgis.PyQt import QtWidgets
 from qgis.core import (
-    QgsProject, QgsMessageLog, QgsWkbTypes, QgsExpression, QgsFeatureRequest)
+    QgsProject,
+    QgsMessageLog,
+    QgsWkbTypes,
+    QgsExpression,
+    QgsFeatureRequest,
+    QgsMapLayer)
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt, QVariant
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -54,6 +59,7 @@ class OpenModellerDialog(QtWidgets.QDialog, FORM_CLASS):
         self.taxon_column.currentIndexChanged.connect(self._update_taxon_list)
         self._populate_point_layer_combo()
         self._populate_algorithm_combo()
+        self._populate_raster_list()
 
     def run(self):
         """Run openModeller with the current point layer."""
@@ -103,7 +109,7 @@ class OpenModellerDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def _update_taxon_list(self, index):
         """Update the list of taxa available for the selected point layer."""
-
+        self.taxon.clear()
         # Get the layer
         layer_id = self.point_layers.itemData(
             self.point_layers.currentIndex()
@@ -114,7 +120,10 @@ class OpenModellerDialog(QtWidgets.QDialog, FORM_CLASS):
         # then iterate over the records collecting unique values and sort them
         unique_list = []
         for feature in layer.getFeatures():
-            value = feature[field_name]
+            try:
+                value = feature[field_name]
+            except KeyError:
+                return
             if value not in unique_list:
                 unique_list.append(value)
         unique_list.sort()
@@ -127,15 +136,26 @@ class OpenModellerDialog(QtWidgets.QDialog, FORM_CLASS):
         self.algorithm_parameters.setPlainText(parameters)
 
     def _populate_point_layer_combo(self):
+        """Set the list of vector layers."""
         layers = QgsProject.instance().mapLayers()
-
         QgsMessageLog.logMessage(
             'openModeller analysis using layers: %s' % layers,
             'SpeciesExplorer',
             0)
         for layer_id, layer in layers.items():
+            if layer.type() == QgsMapLayer.RasterLayer:
+                continue
             if layer.wkbType() == QgsWkbTypes.Point:
                 self.point_layers.addItem(layer.name(), layer_id)
+
+    def _populate_raster_list(self):
+        """Set the list of raster layers."""
+        layers = QgsProject.instance().mapLayers()
+        for layer_id, layer in layers.items():
+            if layer.type() == QgsMapLayer.RasterLayer:
+                item = QtWidgets.QListWidgetItem(layer.name())
+                item.setData(Qt.UserRole, layer_id)
+                self.raster_layers.addItem(item)
 
     def _populate_algorithm_combo(self):
         algorithms = OrderedDict()
