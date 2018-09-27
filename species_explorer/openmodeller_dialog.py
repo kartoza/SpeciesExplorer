@@ -28,9 +28,10 @@ import sys
 from collections import OrderedDict
 from subprocess import call, CalledProcessError
 from qgis.PyQt import QtWidgets
-from qgis.core import QgsProject, QgsMessageLog, QgsWkbTypes
+from qgis.core import (
+    QgsProject, QgsMessageLog, QgsWkbTypes, QgsExpression, QgsFeatureRequest)
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtCore import Qt, QVariant
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'openmodeller_dialog_base.ui'))
 
@@ -50,17 +51,40 @@ class OpenModellerDialog(QtWidgets.QDialog, FORM_CLASS):
         self.ok_button.clicked.connect(self.run)
         self.algorithm.currentIndexChanged.connect(self._show_parameters)
         self.point_layers.currentIndexChanged.connect(self._update_fields)
+        self.taxon_column.currentIndexChanged.connect(self._update_taxon_list)
         self._populate_point_layer_combo()
         self._populate_algorithm_combo()
 
     def run(self):
         """Run openModeller with the current point layer."""
-        layer_id = self.point_layers.currentItem().data(Qt.UserRole)
+        layer_id = self.point_layers.itemData(
+            self.point_layers.currentIndex()
+        )
         layer = QgsProject.instance().mapLayer(layerId=layer_id)
-        QgsMessageLog.logMessage(
-            'openModeller analysis using layer: %s' % layer.name(),
-            'SpeciesExplorer',
-            0)
+        taxon_field = self.taxon_column.currentText()
+        taxon = self.taxon.currentText()
+        expression = QgsExpression('"%s"=\'%s\'' % (taxon_field, taxon))
+        occurrence_file = open('/tmp/occurrences.txt', 'wt')
+        # Format for occurrences file:
+        # #id label   long    lat abundance
+        # 1   Acacia aculeatissima    -67.845739  -11.327340  1
+        occurrence_file.write(
+            '#id label   long    lat abundance\n'
+        )
+        count = 1
+        name_parts = taxon.split(' ')
+        taxon = name_parts[0] + ' ' + name_parts[1]
+        for feature in layer.getFeatures(QgsFeatureRequest(expression)):
+            lon = feature.geometry().asPoint().x()
+            lat = feature.geometry().asPoint().y()
+            line = '%i\t%s\t%s\t%s\t1\n' % (
+                count,
+                taxon,
+                lon,
+                lat
+            )
+            occurrence_file.write(line)
+        occurrence_file.close()
         openmodeller_path = os.path.dirname(__file__)
         openmodeller_path = os.path.abspath(os.path.join(
             openmodeller_path, '..', 'openmodeller', 'bin'))
@@ -74,7 +98,28 @@ class OpenModellerDialog(QtWidgets.QDialog, FORM_CLASS):
         fields = layer.fields()
         self.taxon_column.clear()
         for field in fields:
-            self.taxon_column.addItem(field.name())
+            if field.type() == QVariant.String:
+                self.taxon_column.addItem(field.name())
+
+    def _update_taxon_list(self, index):
+        """Update the list of taxa available for the selected point layer."""
+
+        # Get the layer
+        layer_id = self.point_layers.itemData(
+            self.point_layers.currentIndex()
+        )
+        layer = QgsProject.instance().mapLayer(layerId=layer_id)
+        # then the desired field
+        field_name = self.taxon_column.currentText()
+        # then iterate over the records collecting unique values and sort them
+        unique_list = []
+        for feature in layer.getFeatures():
+            value = feature[field_name]
+            if value not in unique_list:
+                unique_list.append(value)
+        unique_list.sort()
+        for value in unique_list:
+            self.taxon.addItem(value)
 
     def _show_parameters(self, index):
         """Update the parametrs widget based on selected algorithm."""
