@@ -28,6 +28,7 @@ from collections import OrderedDict
 from qgis.PyQt import QtCore, QtGui
 from qgis.PyQt import QtWidgets
 from qgis.core import (
+    QgsSingleBandPseudoColorRenderer,
     QgsProject,
     QgsMessageLog,
     QgsWkbTypes,
@@ -37,6 +38,7 @@ from qgis.core import (
 from qgis.PyQt import uic
 from qgis.core import QgsApplication, QgsRasterLayer
 from qgis.PyQt.QtCore import Qt, QVariant
+from qgis.PyQt.QtGui import QColor
 from species_explorer.utilities import unique_filename
 from qgis.core import (
     QgsColorRampShader,
@@ -434,7 +436,7 @@ Parameter = StandardDeviationFactor 0.0
                     QtCore.Qt.WaitCursor:
                 QgsApplication.instance().restoreOverrideCursor()
 
-    def style_layer(raster_layer):
+    def style_layer(self, raster_layer):
         """Generate an probability ramp using range of 1-255.
     
         255 = high probability
@@ -446,10 +448,10 @@ Parameter = StandardDeviationFactor 0.0
         .. versionadded:: 0.2.0
         """
         instance = QgsColorRampShader()
-        instance.setColorRampType(QgsColorRampShader.INTERPOLATED)
+        instance.setColorRampType(QgsColorRampShader.Interpolated)
         colour_range = [
-            QgsColorRampShader.ColorRampItem(0, QColor(0, 255, 0)),
-            QgsColorRampShader.ColorRampItem(255, QColor(255, 255, 0))
+            QgsColorRampShader.ColorRampItem(0, QColor(255, 0, 0)),
+            QgsColorRampShader.ColorRampItem(255, QColor(0, 255, 0))
         ]
         instance.setColorRampItemList(colour_range)
         shader = QgsRasterShader()
