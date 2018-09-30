@@ -24,9 +24,8 @@
 """
 
 import os
-import sys
 from collections import OrderedDict
-from subprocess import call, CalledProcessError
+from qgis.PyQt import QtCore, QtGui
 from qgis.PyQt import QtWidgets
 from qgis.core import (
     QgsProject,
@@ -36,7 +35,14 @@ from qgis.core import (
     QgsFeatureRequest,
     QgsMapLayer)
 from qgis.PyQt import uic
+from qgis.core import QgsApplication, QgsRasterLayer
 from qgis.PyQt.QtCore import Qt, QVariant
+from species_explorer.utilities import unique_filename
+from qgis.core import (
+    QgsColorRampShader,
+    QgsRasterShader,
+    QgsSingleBandColorDataRenderer)
+
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'openmodeller_dialog_base.ui'))
 
@@ -51,6 +57,8 @@ class OpenModellerDialog(QtWidgets.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+        self.model_output = None
+        self.model_taxon = None
         self.ok_button = self.button_box.button(
             QtWidgets.QDialogButtonBox.Ok)
         self.ok_button.clicked.connect(self.run)
@@ -61,16 +69,50 @@ class OpenModellerDialog(QtWidgets.QDialog, FORM_CLASS):
         self._populate_algorithm_combo()
         self._populate_raster_list()
 
+        # QProcess object for external app
+        self.process = QtCore.QProcess(self)
+        # QProcess emits `readyRead` when there is data to be read
+        self.process.readyReadStandardError.connect(self.data_ready)
+        self.process.readyReadStandardOutput.connect(self.data_ready)
+        # Just to prevent accidentally running multiple times
+        # Disable the button when process starts, and enable it when it finishes
+        self.process.started.connect(lambda: self.ok_button.setEnabled(False))
+        self.process.finished.connect(lambda: self.ok_button.setEnabled(True))
+        self.process.finished.connect(self.show_model_output)
+
+    def show_model_output(self):
+        """Slot to show morel output on completion."""
+        if self.model_output is not None and os.path.exists(self.model_output):
+            raster_layer = QgsRasterLayer(
+                self.model_output, '%s niche' % self.model_taxon)
+            self.style_layer(raster_layer)
+            QgsProject.instance().addMapLayer(raster_layer, True)
+
+    def data_ready(self):
+        """Slot to handle updates to the log window from QProcess."""
+        cursor = self.log.textCursor()
+        cursor.movePosition(cursor.End)
+        text = str(self.process.readAllStandardOutput(), 'utf-8')
+        cursor.insertText(text)
+        text = str(self.process.readAllStandardError(), 'utf-8')
+        if text is not None:
+            cursor.insertText('Error: %s' % text)
+        cursor.movePosition(cursor.End)
+        self.log.ensureCursorVisible()
+
     def run(self):
         """Run openModeller with the current point layer."""
+        self.tabs.setCurrentIndex(1)
         layer_id = self.point_layers.itemData(
             self.point_layers.currentIndex()
         )
         layer = QgsProject.instance().mapLayer(layerId=layer_id)
         taxon_field = self.taxon_column.currentText()
-        taxon = self.taxon.currentText()
-        expression = QgsExpression('"%s"=\'%s\'' % (taxon_field, taxon))
-        occurrence_file = open('/tmp/occurrences.txt', 'wt')
+        self.model_taxon = self.taxon.currentText()
+        expression = QgsExpression('"%s"=\'%s\'' % (
+            taxon_field, self.model_taxon))
+        occurrences_path = unique_filename(prefix='occurrences', suffix='.txt')
+        occurrence_file = open(occurrences_path, 'wt')
         # Format for occurrences file:
         # #id label   long    lat abundance
         # 1   Acacia aculeatissima    -67.845739  -11.327340  1
@@ -78,14 +120,14 @@ class OpenModellerDialog(QtWidgets.QDialog, FORM_CLASS):
             '#id label   long    lat abundance\n'
         )
         count = 1
-        name_parts = taxon.split(' ')
-        taxon = name_parts[0] + ' ' + name_parts[1]
+        name_parts = self.model_taxon.split(' ')
+        self.model_taxon = name_parts[0] + ' ' + name_parts[1]
         for feature in layer.getFeatures(QgsFeatureRequest(expression)):
             lon = feature.geometry().asPoint().x()
             lat = feature.geometry().asPoint().y()
             line = '%i\t%s\t%s\t%s\t1\n' % (
                 count,
-                taxon,
+                self.model_taxon,
                 lon,
                 lat
             )
@@ -98,21 +140,22 @@ class OpenModellerDialog(QtWidgets.QDialog, FORM_CLASS):
             layer = QgsProject.instance().mapLayer(layerId=layer_id)
             source = layer.source()
             rasters.append(source)
-        request_file = open('/tmp/request.txt', 'wt')
+        request_path = unique_filename(prefix='request', suffix='.txt')
+        request_file = open(request_path, 'wt')
         request_file.writelines(
         """
 WKT Coord System = GEOGCS["WGS84", DATUM["WGS84", SPHEROID["WGS84", 6378137.0, 298.257223563]], PRIMEM["Greenwich", 0.0], UNIT["degree", 0.017453292519943295], AXIS["Longitude",EAST], AXIS["Latitude",NORTH]]
 Output file type = GreyTiff
 Spatially unique = true
-Environmentally unique = true\n
-        """)
-        request_file.write('Occurrences source = %s\n' % occurrence_file.name)
-        request_file.write('Occurrences group = %s\n' % taxon)
+Environmentally unique = true\n""")
+        request_file.write('Occurrences source = %s\n' % occurrences_path)
+        request_file.write('Occurrences group = %s\n' % self.model_taxon)
         for layer in rasters:
             # We will use the same layers for both
             # model creation and projection
             request_file.write('Map = %s\n' % layer)
             request_file.write('Output map = %s\n' % layer)
+        self.model_output = unique_filename(prefix='model', suffix='.tif')
         # Just use the first raster as mask for now
         request_file.write('Mask = %s\n' % rasters[0])
         request_file.write('Output mask = %s\n' % rasters[0])
@@ -121,7 +164,7 @@ Environmentally unique = true\n
         # Serialise the model created by openModeller
         request_file.write('Output model = /tmp/model.xml\n')
         # Name of georeferenced output
-        request_file.write('Output file = /tmp/model.tif\n')
+        request_file.write('Output file = %s\n' % self.model_output)
         # Now write the algorithm name and parameters
         request_file.write(self.algorithm_parameters.toPlainText())
 
@@ -131,7 +174,12 @@ Environmentally unique = true\n
         openmodeller_path = os.path.abspath(os.path.join(
             openmodeller_path, '..', 'openmodeller', 'bin'))
         binary = os.path.join(openmodeller_path, 'om_console')
-        self._run_command(binary + ' /tmp/request.txt')
+        QgsMessageLog.logMessage(
+            'executing this shell call:\n %s %s' % (binary, request_path),
+            'SpeciesExplorer',
+            0)
+        self._run_command(binary, [request_path])
+
 
     def _update_fields(self, index):
         """Update the list of fields available for the selected point layer."""
@@ -362,33 +410,50 @@ Parameter = StandardDeviationFactor 0.0
         for algorithm, parameters in algorithms.items():
             self.algorithm.addItem(algorithm, parameters)
 
-    def _run_command(self, command):
+    def _run_command(self, command, arguments):
         """Run a command and raise any error as needed.
 
         This is a simple runner for executing shell commands.
 
-        :param command: A command string to be run.
+        :param command: A command string and its prameters to be run.
+        Pass the command as a list e.g.['ls', '-lah']
         :type command: str
 
         :raises: Any exceptions will be propagated.
         """
+        QgsApplication.instance().setOverrideCursor(
+            QtGui.QCursor(QtCore.Qt.WaitCursor)
+        )
+
         try:
-            my_result = call(command, shell=True)
-            del my_result
-        except CalledProcessError as e:
-            QgsMessageLog.logMessage(
-                'Running command failed %s' % command,
-                'SpeciesExplorer',
-                0)
-            message = (
-                'Error while executing the following shell '
-                'command: %s\nError message: %s' % (command, str(e)))
-            # shameless hack - see https://github.com/AIFDR/inasafe/issues/141
-            if sys.platform == 'darwin':  # Mac OS X
-                if 'Errno 4' in str(e):
-                    # continue as the error seems to be non critical
-                    pass
-                else:
-                    raise Exception(message)
-            else:
-                raise Exception(message)
+            self.process.start(command, arguments)
+        finally:
+            # recursively walk back the cursor to a pointer
+            while QgsApplication.instance().overrideCursor() is not None and \
+                QgsApplication.instance().overrideCursor().shape() == \
+                    QtCore.Qt.WaitCursor:
+                QgsApplication.instance().restoreOverrideCursor()
+
+    def style_layer(raster_layer):
+        """Generate an probability ramp using range of 1-255.
+    
+        255 = high probability
+        0 = low
+    
+        :param raster_layer: A raster layer that will have a style applied.
+        :type raster_layer: QgsRasterLayer
+    
+        .. versionadded:: 0.2.0
+        """
+        instance = QgsColorRampShader()
+        instance.setColorRampType(QgsColorRampShader.INTERPOLATED)
+        colour_range = [
+            QgsColorRampShader.ColorRampItem(0, QColor(0, 255, 0)),
+            QgsColorRampShader.ColorRampItem(255, QColor(255, 255, 0))
+        ]
+        instance.setColorRampItemList(colour_range)
+        shader = QgsRasterShader()
+        shader.setRasterShaderFunction(instance)
+        renderer = QgsSingleBandPseudoColorRenderer(
+            raster_layer.dataProvider(), 1, shader)
+        raster_layer.setRenderer(renderer)
