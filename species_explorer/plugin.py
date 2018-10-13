@@ -160,13 +160,13 @@ class SpeciesExplorer:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_path = ':/plugins/species_explorer/icon.png'
+        icon_path = ':/plugins/species_explorer/icon.svg'
         self.add_action(
             icon_path,
             text=self.tr(u'GBIF Downloader'),
             callback=self.gbif_downloader,
             parent=self.iface.mainWindow())
-        icon_path = ':/plugins/species_explorer/icon.png'
+        icon_path = ':/plugins/species_explorer/om-icon.svg'
         self.add_action(
             icon_path,
             text=self.tr(u'openModeller'),

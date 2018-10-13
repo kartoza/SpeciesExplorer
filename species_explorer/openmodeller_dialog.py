@@ -97,7 +97,39 @@ class OpenModellerDialog(QtWidgets.QDialog, FORM_CLASS):
         text = str(self.process.readAllStandardOutput(), 'utf-8')
         cursor.insertText(text)
         text = str(self.process.readAllStandardError(), 'utf-8')
-        if text is not None:
+        if text is None:
+            pass
+        elif 'Model creation:' in text:
+            # we can get some progress info from this error message
+            number_text = text.replace('[Info] Model creation: ', '')
+            number_text.strip()
+            number_text = number_text.replace('%%', '')
+            progress = float(number_text)
+            try:
+
+                QgsMessageLog.logMessage(
+                    'Progress for creation: %s' % progress,
+                    'SpeciesExplorer',
+                    0)
+                self.creation_progress.setValue(progress)
+            except:
+                cursor.insertText('Error: %s' % text)
+        elif 'Map creation:' in text:
+            # we can get some progress info from this error message
+            number_text = text.replace('[Info] Map creation: ', '')
+            number_text.strip()
+            number_text = number_text.replace('%%', '')
+            progress = float(number_text)
+            try:
+
+                QgsMessageLog.logMessage(
+                    'Progress for map: %s' % progress,
+                    'SpeciesExplorer',
+                    0)
+                self.projection_progress.setValue(progress)
+            except:
+                cursor.insertText('Error: %s' % text)
+        else:
             cursor.insertText('Error: %s' % text)
         cursor.movePosition(cursor.End)
         self.log.ensureCursorVisible()
@@ -105,6 +137,8 @@ class OpenModellerDialog(QtWidgets.QDialog, FORM_CLASS):
     def run(self):
         """Run openModeller with the current point layer."""
         self.tabs.setCurrentIndex(1)
+        self.creation_progress.setValue(0.0)
+        self.projection_progress.setValue(0.0)
         layer_id = self.point_layers.itemData(
             self.point_layers.currentIndex()
         )
@@ -157,6 +191,7 @@ Environmentally unique = true\n""")
             # model creation and projection
             request_file.write('Map = %s\n' % layer)
             request_file.write('Output map = %s\n' % layer)
+        clean_name = self.model_taxon.replace(' ', '_')
         self.model_output = unique_filename(prefix='model', suffix='.tif')
         # Just use the first raster as mask for now
         request_file.write('Mask = %s\n' % rasters[0])
@@ -437,7 +472,7 @@ Parameter = StandardDeviationFactor 0.0
                 QgsApplication.instance().restoreOverrideCursor()
 
     def style_layer(self, raster_layer):
-        """Generate an probability ramp using range of 1-255.
+        """Generate a probability ramp using range of 1-255.
     
         255 = high probability
         0 = low
