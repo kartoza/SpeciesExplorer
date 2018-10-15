@@ -157,7 +157,10 @@ class OpenModellerDialog(QtWidgets.QDialog, FORM_CLASS):
         )
         count = 1
         name_parts = self.model_taxon.split(' ')
-        self.model_taxon = name_parts[0] + ' ' + name_parts[1]
+        if len(name_parts) < 2:
+            self.model_taxon = name_parts[0]
+        else:
+            self.model_taxon = name_parts[0] + ' ' + name_parts[1]
         for feature in layer.getFeatures(QgsFeatureRequest(expression)):
             lon = feature.geometry().asPoint().x()
             lat = feature.geometry().asPoint().y()
