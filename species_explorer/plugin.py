@@ -30,6 +30,7 @@ from .resources import *
 # Import the code for the dialog
 from .gbif_downloader_dialog import GBIFDownloaderDialog
 from .openmodeller_dialog import OpenModellerDialog
+from .options_dialog import OptionsDialog
 import os.path
 
 
@@ -172,6 +173,13 @@ class SpeciesExplorer:
             text=self.tr(u'openModeller'),
             callback=self.openmodeller,
             parent=self.iface.mainWindow())
+        icon_path = ':/plugins/species_explorer/om-icon.svg'
+        self.add_action(
+            icon_path,
+            add_to_toolbar=False,
+            text=self.tr(u'options'),
+            callback=self.options,
+            parent=self.iface.mainWindow())
         # Only show the tests menubar item if we have a source check out
         # determined to be true if the tests directory is present...
         if os.path.exists(os.path.dirname(__file__) + '/tests/'):
@@ -198,6 +206,18 @@ class SpeciesExplorer:
         gbif_dialog = GBIFDownloaderDialog()
         # Run the dialog event loop
         result = gbif_dialog.exec_()
+        # See if OK was pressed
+        if result:
+            # Do something useful here - delete the line containing pass and
+            # substitute with your code.
+            pass
+
+    def options(self):
+        """Show the openModeller Dialog"""
+        # show the dialog
+        options_dialog = OptionsDialog()
+        # Run the dialog event loop
+        result = options_dialog.exec_()
         # See if OK was pressed
         if result:
             # Do something useful here - delete the line containing pass and

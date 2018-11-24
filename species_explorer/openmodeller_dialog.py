@@ -42,8 +42,7 @@ from qgis.PyQt.QtGui import QColor
 from species_explorer.utilities import unique_filename
 from qgis.core import (
     QgsColorRampShader,
-    QgsRasterShader,
-    QgsSingleBandColorDataRenderer)
+    QgsRasterShader)
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'openmodeller_dialog_base.ui'))
@@ -61,9 +60,13 @@ class OpenModellerDialog(QtWidgets.QDialog, FORM_CLASS):
         self.setupUi(self)
         self.model_output = None
         self.model_taxon = None
-        self.ok_button = self.button_box.button(
+        self.run_button = self.button_box.button(
             QtWidgets.QDialogButtonBox.Ok)
-        self.ok_button.clicked.connect(self.run)
+        self.run_button.setText('Run')
+        self.run_button.clicked.connect(self.run)
+        self.close_button = self.button_box.button(
+            QtWidgets.QDialogButtonBox.Close)
+        self.close_button.clicked.connect(self.reject)
         self.algorithm.currentIndexChanged.connect(self._show_parameters)
         self.point_layers.currentIndexChanged.connect(self._update_fields)
         self.taxon_column.currentIndexChanged.connect(self._update_taxon_list)
@@ -77,9 +80,10 @@ class OpenModellerDialog(QtWidgets.QDialog, FORM_CLASS):
         self.process.readyReadStandardError.connect(self.data_ready)
         self.process.readyReadStandardOutput.connect(self.data_ready)
         # Just to prevent accidentally running multiple times
-        # Disable the button when process starts, and enable it when it finishes
-        self.process.started.connect(lambda: self.ok_button.setEnabled(False))
-        self.process.finished.connect(lambda: self.ok_button.setEnabled(True))
+        # Disable the button when process starts,
+        # and enable it when it finishes
+        self.process.started.connect(lambda: self.run_button.setEnabled(False))
+        self.process.finished.connect(lambda: self.run_button.setEnabled(True))
         self.process.finished.connect(self.show_model_output)
 
     def show_model_output(self):
@@ -97,6 +101,10 @@ class OpenModellerDialog(QtWidgets.QDialog, FORM_CLASS):
         text = str(self.process.readAllStandardOutput(), 'utf-8')
         cursor.insertText(text)
         text = str(self.process.readAllStandardError(), 'utf-8')
+
+        # TODO: Trying to make this next section work - need better parser of
+        # TODO: stderr to see the model creation and projection progress....
+
         if text is None:
             pass
         elif 'Model creation:' in text:
@@ -104,9 +112,8 @@ class OpenModellerDialog(QtWidgets.QDialog, FORM_CLASS):
             number_text = text.replace('[Info] Model creation: ', '')
             number_text.strip()
             number_text = number_text.replace('%%', '')
-            progress = float(number_text)
             try:
-
+                progress = float(number_text)
                 QgsMessageLog.logMessage(
                     'Progress for creation: %s' % progress,
                     'SpeciesExplorer',
@@ -119,9 +126,9 @@ class OpenModellerDialog(QtWidgets.QDialog, FORM_CLASS):
             number_text = text.replace('[Info] Map creation: ', '')
             number_text.strip()
             number_text = number_text.replace('%%', '')
-            progress = float(number_text)
-            try:
 
+            try:
+                progress = float(number_text)
                 QgsMessageLog.logMessage(
                     'Progress for map: %s' % progress,
                     'SpeciesExplorer',

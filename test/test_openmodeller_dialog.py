@@ -30,7 +30,7 @@ class OpenModellerDialogTest(unittest.TestCase):
 
     def setUp(self):
         """Runs before each test."""
-        self.dialog = OpenModellerDialog(None)
+
         current_dir = os.path.dirname(os.path.abspath(__file__))
         rain_coolest = os.path.join(current_dir, 'rain_coolest.tif')
         name = os.path.basename('rain_coolest')
@@ -38,19 +38,19 @@ class OpenModellerDialogTest(unittest.TestCase):
         temp_avg = os.path.join(current_dir, 'temp_avg.tif')
         name = os.path.basename('temp_avg')
         temp_avg_layer = QgsRasterLayer(temp_avg, name)
-        furcata = os.path.join(current_dir, 'furcata_bolvana.geojson')
+        furcata = os.path.join(current_dir, 'furcata_bolivana.geojson')
         furcata_layer = QgsVectorLayer(furcata, 'Furcata boliviana', 'ogr')
         QgsProject.instance().addMapLayer(temp_avg_layer, True)
         QgsProject.instance().addMapLayer(rain_coolest_layer, True)
         QgsProject.instance().addMapLayer(furcata_layer, True)
 
-
-
+        # Initialise the dialog last so that the text fixtures are in place
+        # project layers populated etc.
+        self.dialog = OpenModellerDialog(None)
 
     def tearDown(self):
         """Runs after each test."""
         self.dialog = None
-
 
     def test_dialog_run(self):
         """Test we can click OK."""
@@ -60,18 +60,19 @@ class OpenModellerDialogTest(unittest.TestCase):
         self.dialog.algorithm.setCurrentIndex(9)
         # Select all raster layers
         self.dialog.raster_layers.selectAll()
+        taxon = self.dialog.taxon_column.currentText()
+        self.assertEqual(taxon, 'label')
+        algorithm = self.dialog.algorithm.currentText()
+        self.assertTrue(algorithm, 'Maximum Entropy')
         # Run the analysis
-        button = self.dialog.button_box.button(
-            QtWidgets.QDialogButtonBox.Ok)
-        button.click()
-        result = self.dialog.results_list.item(0).text()
+        self.dialog.run()
         # Get the output log from the analysis
-        log_text = self.dialog.log.text()
-        self.assertEqual(result, 'Acacia saligna')
+        log_text = self.dialog.log.toPlainText()
+        self.assertTrue('[Info] Done.' in log_text)
 
 
 if __name__ == "__main__":
-    suite = unittest.makeSuite(SpeciesExplorerDialogTest)
+    suite = unittest.makeSuite(OpenModellerDialogTest)
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite)
 
