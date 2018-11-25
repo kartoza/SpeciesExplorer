@@ -37,7 +37,8 @@ from qgis.core import (
     QgsMapLayer)
 from qgis.PyQt import uic
 from qgis.core import QgsApplication, QgsRasterLayer
-from qgis.PyQt.QtCore import Qt, QVariant
+from qgis.gui import QgsMessageBar
+from qgis.PyQt.QtCore import Qt, QVariant, QSettings
 from qgis.PyQt.QtGui import QColor
 from species_explorer.utilities import unique_filename
 from qgis.core import (
@@ -49,8 +50,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 
 class OpenModellerDialog(QtWidgets.QDialog, FORM_CLASS):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, iface=None):
         """Constructor."""
+        self.iface = iface
         super(OpenModellerDialog, self).__init__(parent)
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
@@ -217,10 +219,19 @@ Environmentally unique = true\n""")
 
         request_file.close()
 
-        openmodeller_path = os.path.dirname(__file__)
-        openmodeller_path = os.path.abspath(os.path.join(
-            openmodeller_path, '..', 'openmodeller', 'bin'))
+        openmodeller_path = QSettings().value(
+            'SpeciesExplorer/openModellerPath', False, type=str)
         binary = os.path.join(openmodeller_path, 'om_console')
+        if not os.path.exists(binary):
+            self.iface.messageBar().createMessage(
+                'om_console not found',
+                'Please check the search path in SpeciesExplorer options.')
+            QgsMessageLog.logMessage(
+                'Could not execute this this shell call:\n %s %s' % (
+                    binary, request_path),
+                'SpeciesExplorer',
+                0)
+            return
         QgsMessageLog.logMessage(
             'executing this shell call:\n %s %s' % (binary, request_path),
             'SpeciesExplorer',

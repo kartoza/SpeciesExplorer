@@ -24,10 +24,10 @@
 """
 
 import os
-from qgis.PyQt import QtCore, QtGui
 from qgis.PyQt import QtWidgets
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import Qt, QVariant
+from qgis.PyQt.QtWidgets import QFileDialog
+from qgis.PyQt.QtCore import QSettings
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -50,6 +50,23 @@ class OptionsDialog(QtWidgets.QDialog, FORM_CLASS):
         self.cancel_button = self.button_box.button(
             QtWidgets.QDialogButtonBox.Cancel)
         self.cancel_button.clicked.connect(self.reject)
+        self.path_button.clicked.connect(
+            self.openmodeller_path)
+
+        openmodeller_path = QSettings().value(
+            'SpeciesExplorer/openModellerPath', False, type=str)
+        self.path.setText(openmodeller_path)
+
+    def openmodeller_path(self):
+        """Set the path for the openModeller binary directory."""
+        # noinspection PyCallByClass,PyTypeChecker
+        directory_name = QFileDialog.getExistingDirectory(
+            self,
+            self.tr('openModeller directory'),
+            self.path.text(),
+            QFileDialog.ShowDirsOnly)
+        QSettings().setValue(
+            'SpeciesExplorer/openModellerPath', directory_name)
 
     def ok(self):
         pass

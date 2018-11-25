@@ -215,7 +215,7 @@ class SpeciesExplorer:
     def options(self):
         """Show the openModeller Dialog"""
         # show the dialog
-        options_dialog = OptionsDialog()
+        options_dialog = OptionsDialog(parent=self.iface.mainWindow())
         # Run the dialog event loop
         result = options_dialog.exec_()
         # See if OK was pressed
@@ -227,7 +227,9 @@ class SpeciesExplorer:
     def openmodeller(self):
         """Show the openModeller Dialog"""
         # show the dialog
-        openmodeller_dialog = OpenModellerDialog()
+        openmodeller_dialog = OpenModellerDialog(
+            parent=self.iface.mainWindow(),
+            iface=self.iface)
         # Run the dialog event loop
         result = openmodeller_dialog.exec_()
         # See if OK was pressed
@@ -235,6 +237,7 @@ class SpeciesExplorer:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
             pass
+
     def run_tests(self):
         """Run unit tests in the python console."""
         from qgis.PyQt.QtWidgets import QDockWidget
