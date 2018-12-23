@@ -188,7 +188,7 @@ class OpenModellerDialog(QtWidgets.QDialog, FORM_CLASS):
             layer = QgsProject.instance().mapLayer(layerId=layer_id)
             source = layer.source()
             rasters.append(source)
-        request_path = unique_filename(prefix='request', suffix='.txt')
+        request_path = unique_filename(prefix=clean_name, suffix='.txt')
         request_file = open(request_path, 'wt')
         request_file.writelines(
         """
@@ -204,14 +204,16 @@ Environmentally unique = true\n""")
             request_file.write('Map = %s\n' % layer)
             request_file.write('Output map = %s\n' % layer)
         clean_name = self.model_taxon.replace(' ', '_')
-        self.model_output = unique_filename(prefix='model', suffix='.tif')
+        self.model_output = unique_filename(
+            prefix=clean_name, suffix='.tif')
         # Just use the first raster as mask for now
         request_file.write('Mask = %s\n' % rasters[0])
         request_file.write('Output mask = %s\n' % rasters[0])
         # This determines the cell size and extents
         request_file.write('Output format = %s\n' % rasters[0])
         # Serialise the model created by openModeller
-        request_file.write('Output model = /tmp/model.xml\n')
+        model_path = unique_filename(prefix=clean_name, suffix='.xml')
+        request_file.write('Output model = %s\n' % model_path)
         # Name of georeferenced output
         request_file.write('Output file = %s\n' % self.model_output)
         # Now write the algorithm name and parameters
@@ -219,24 +221,25 @@ Environmentally unique = true\n""")
 
         request_file.close()
 
-        openmodeller_path = QSettings().value(
-            'SpeciesExplorer/openModellerPath', False, type=str)
-        binary = os.path.join(openmodeller_path, 'om_console')
-        if not os.path.exists(binary):
+        om_console_path = QSettings().value(
+            'SpeciesExplorer/om_console_path', False, type=str)
+
+        if not os.path.exists(om_console_path):
             self.iface.messageBar().createMessage(
                 'om_console not found',
                 'Please check the search path in SpeciesExplorer options.')
             QgsMessageLog.logMessage(
                 'Could not execute this this shell call:\n %s %s' % (
-                    binary, request_path),
+                    om_console_path, request_path),
                 'SpeciesExplorer',
                 0)
             return
         QgsMessageLog.logMessage(
-            'executing this shell call:\n %s %s' % (binary, request_path),
+            'executing this shell call:\n %s %s' % (
+                om_console_path, request_path),
             'SpeciesExplorer',
             0)
-        self._run_command(binary, [request_path])
+        self._run_command(om_console_path, [request_path])
 
 
     def _update_fields(self, index):

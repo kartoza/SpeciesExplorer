@@ -53,20 +53,19 @@ class OptionsDialog(QtWidgets.QDialog, FORM_CLASS):
         self.path_button.clicked.connect(
             self.openmodeller_path)
 
-        openmodeller_path = QSettings().value(
-            'SpeciesExplorer/openModellerPath', False, type=str)
-        self.path.setText(openmodeller_path)
+        om_console_path = QSettings().value(
+            'SpeciesExplorer/om_console_path', False, type=str)
+        self.path.setText(om_console_path)
 
     def openmodeller_path(self):
         """Set the path for the openModeller binary directory."""
         # noinspection PyCallByClass,PyTypeChecker
-        directory_name = QFileDialog.getExistingDirectory(
+        directory_name = QFileDialog.getOpenFileName(
             self,
             self.tr('openModeller directory'),
-            self.path.text(),
-            QFileDialog.ShowDirsOnly)
+            self.path.text())
         QSettings().setValue(
-            'SpeciesExplorer/openModellerPath', directory_name)
+            'SpeciesExplorer/om_console_path', directory_name)
 
     def ok(self):
         pass

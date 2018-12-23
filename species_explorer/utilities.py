@@ -7,7 +7,7 @@ from tempfile import mkstemp
 def temp_dir(sub_dir='work'):
     """Obtain the temporary working directory for the operating system.
 
-    An inasafe subdirectory will automatically be created under this and
+    An species_explorer subdirectory will automatically be created under this and
     if specified, a user subdirectory under that.
 
     .. note:: You can use this together with unique_filename to create
@@ -33,8 +33,8 @@ def temp_dir(sub_dir='work'):
     user = getpass.getuser().replace(' ', '_')
     current_date = date.today()
     date_string = current_date.isoformat()
-    if 'INASAFE_WORK_DIR' in os.environ:
-        new_directory = os.environ['INASAFE_WORK_DIR']
+    if 'SPECIES_EXPLORER_WORK_DIR' in os.environ:
+        new_directory = os.environ['SPECIES_EXPLORER_WORK_DIR']
     else:
         # Following 4 lines are a workaround for tempfile.tempdir()
         # unreliabilty
@@ -43,7 +43,7 @@ def temp_dir(sub_dir='work'):
         new_directory = os.path.dirname(filename)
         os.remove(filename)
 
-    path = os.path.join(new_directory, 'inasafe', date_string, user, sub_dir)
+    path = os.path.join(new_directory, 'species_explorer', date_string, user, sub_dir)
 
     if not os.path.exists(path):
         # Ensure that the dir is world writable
@@ -63,7 +63,7 @@ def unique_filename(**kwargs):
     If dir is specified, the tempfile will be created in the path specified
     otherwise the file will be created in a directory following this scheme:
 
-    :file:'/tmp/inasafe/<dd-mm-yyyy>/<user>/impacts'
+    :file:'/tmp/species_explorer/<dd-mm-yyyy>/<user>/impacts'
 
     See http://docs.python.org/library/tempfile.html for details.
 
@@ -72,17 +72,17 @@ def unique_filename(**kwargs):
     tempdir = temp_dir(sub_dir='test')
     filename = unique_filename(suffix='.foo', dir=tempdir)
     print filename
-    /tmp/inasafe/23-08-2012/timlinux/test/tmpyeO5VR.foo
+    /tmp/species_explorer/23-08-2012/timlinux/test/tmpyeO5VR.foo
 
     Or with no preferred subdir, a default subdir of 'impacts' is used:
 
     filename = unique_filename(suffix='.shp')
     print filename
-    /tmp/inasafe/23-08-2012/timlinux/impacts/tmpoOAmOi.shp
+    /tmp/species_explorer/23-08-2012/timlinux/impacts/tmpoOAmOi.shp
 
     """
     if 'dir' not in kwargs:
-        path = temp_dir('openModeller')
+        path = temp_dir('species_explorer')
         kwargs['dir'] = path
     else:
         path = temp_dir(kwargs['dir'])

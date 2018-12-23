@@ -164,20 +164,23 @@ class SpeciesExplorer:
         icon_path = ':/plugins/species_explorer/icon.svg'
         self.add_action(
             icon_path,
+            add_to_menu=True,
             text=self.tr(u'GBIF Downloader'),
             callback=self.gbif_downloader,
             parent=self.iface.mainWindow())
         icon_path = ':/plugins/species_explorer/om-icon.svg'
         self.add_action(
             icon_path,
+            add_to_menu=True,
             text=self.tr(u'openModeller'),
             callback=self.openmodeller,
             parent=self.iface.mainWindow())
         icon_path = ':/plugins/species_explorer/om-icon.svg'
         self.add_action(
             icon_path,
+            add_to_menu=True,
             add_to_toolbar=False,
-            text=self.tr(u'options'),
+            text=self.tr(u'Options'),
             callback=self.options,
             parent=self.iface.mainWindow())
         # Only show the tests menubar item if we have a source check out
@@ -185,6 +188,7 @@ class SpeciesExplorer:
         if os.path.exists(os.path.dirname(__file__) + '/tests/'):
             self.add_action(
                 icon_path,
+                add_to_menu=True,
                 text=self.tr(u'Species Explorer Tests'),
                 callback=self.run_tests,
                 parent=self.iface.mainWindow())
