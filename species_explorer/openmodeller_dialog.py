@@ -37,7 +37,6 @@ from qgis.core import (
     QgsMapLayer)
 from qgis.PyQt import uic
 from qgis.core import QgsApplication, QgsRasterLayer
-from qgis.gui import QgsMessageBar
 from qgis.PyQt.QtCore import Qt, QVariant, QSettings
 from qgis.PyQt.QtGui import QColor
 from species_explorer.utilities import unique_filename
@@ -240,7 +239,6 @@ Environmentally unique = true\n""")
             'SpeciesExplorer',
             0)
         self._run_command(om_console_path, [request_path])
-
 
     def _update_fields(self, index):
         """Update the list of fields available for the selected point layer."""
