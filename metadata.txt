@@ -26,7 +26,7 @@ repository=https://github.com/kartoza/SpeciesExplorer
 # changelog=
 
 # Tags are comma separated with spaces allowed
-tags=biodiversity
+tags=biodiversity,gbif
 
 homepage=https://github.com/kartoza/SpeciesExplorer
 category=Web
