@@ -1,207 +1,231 @@
-# coding=utf-8
-import requests
+# SPDX-FileCopyrightText: 2018-2024 Kartoza <info@kartoza.com>
+# SPDX-FileCopyrightText: Scott Chamberlain (original pygbif code)
+# SPDX-License-Identifier: MIT
 
-# import pygbif
+"""
+GBIF API utilities for Species Explorer.
 
-__version__ = '0.2.2.1'
-__title__ = 'pygbif'
-__author__ = 'Scott Chamberlain'
-__license__ = 'MIT'
+This module provides functions for interacting with the GBIF REST API
+using QGIS native networking classes (QgsNetworkAccessManager/QgsFileDownloader).
 
-# Original logic by Scott Chaimberlain, extracted from his pygbif repo
-# Modified by Tim and Etienne to use QgsNetworkAccessManager rather
-from qgis.PyQt.QtCore import QUrl, QEventLoop
-from qgis.core import QgsMessageLog, QgsFileDownloader
+Original logic by Scott Chamberlain, extracted from his pygbif repo.
+"""
 
-from tempfile import mkstemp
 import json
+import os
+from tempfile import mkstemp
+from typing import Any, Dict, List, Optional, Union
+
+from qgis.core import QgsFileDownloader, QgsMessageLog, QgsNetworkAccessManager
+from qgis.PyQt.QtCore import QEventLoop, QUrl
+
+__version__ = "0.3.0"
+__title__ = "gbifutils"
+__author__ = "Scott Chamberlain, Tim Sutton, Etienne Trimaille"
+__license__ = "MIT"
+
+# GBIF API base URL (using HTTPS)
+GBIF_BASE_URL = "https://api.gbif.org/v1/"
 
 
 class NoResultException(Exception):
+    """Raised when no results are returned from GBIF."""
+
     pass
 
 
-def gbif_GET(url, args, **kwargs):
-    handle, output_path = mkstemp()
-    QgsMessageLog.logMessage(
-        'gbif_GET outfile: %s' % output_path, 'SpeciesExplorer', 0)
-    QgsMessageLog.logMessage('gbif_GET URL: %s' % url, 'SpeciesExplorer', 0)
+class GBIFNetworkError(Exception):
+    """Raised when a network error occurs."""
+
+    pass
+
+
+def gbif_GET(url: str, args: Optional[Dict] = None, **kwargs) -> Dict[str, Any]:
+    """Make a GET request to the GBIF API using QGIS native networking.
+
+    Uses QgsFileDownloader which respects QGIS proxy settings and
+    provides proper SSL handling.
+
+    Args:
+        url: The URL to request.
+        args: Optional query arguments (currently unused, for API compatibility).
+        **kwargs: Additional keyword arguments (for API compatibility).
+
+    Returns:
+        Parsed JSON response as a dictionary.
+
+    Raises:
+        GBIFNetworkError: If the request fails.
+    """
+    handle, output_path = mkstemp(suffix=".json")
+    os.close(handle)  # Close the file handle immediately
+
+    QgsMessageLog.logMessage(f"gbif_GET URL: {url}", "SpeciesExplorer", 0)
+
+    # Use QEventLoop to make the async download synchronous
     loop = QEventLoop()
+    error_occurred = [False]  # Use list to allow modification in closure
+    error_message = [""]
+
+    def on_error(errors: List[str]) -> None:
+        error_occurred[0] = True
+        error_message[0] = ", ".join(errors) if errors else "Unknown error"
+
     downloader = QgsFileDownloader(QUrl(url), output_path, delayStart=True)
     downloader.downloadExited.connect(loop.quit)
+    downloader.downloadError.connect(on_error)
     downloader.startDownload()
     loop.exec_()
-    file = open(output_path, 'rt', encoding='utf-8')
-    data = file.read()
-    file.close()
 
-    return json.loads(data, encoding='utf-8')
+    if error_occurred[0]:
+        raise GBIFNetworkError(f"Failed to fetch {url}: {error_message[0]}")
+
+    try:
+        with open(output_path, "rt", encoding="utf-8") as f:
+            data = f.read()
+        return json.loads(data)
+    except json.JSONDecodeError as e:
+        raise GBIFNetworkError(f"Invalid JSON response from {url}: {e}")
+    finally:
+        # Clean up temp file
+        try:
+            os.unlink(output_path)
+        except OSError:
+            pass
 
 
-gbif_baseurl = "http://api.gbif.org/v1/"
+def name_parser(name: str, **kwargs) -> List[Dict[str, Any]]:
+    """Parse taxon names using the GBIF name parser.
 
-requests_argset = ['timeout', 'cookies', 'auth', 'allow_redirects',
-                   'proxies', 'verify', 'stream', 'cert']
+    Args:
+        name: A scientific name string to parse.
+
+    Returns:
+        List of parsed name dictionaries.
+
+    Reference:
+        https://www.gbif.org/developer/species#parser
+
+    Example:
+        >>> name_parser('Vanessa atalanta (Linnaeus, 1758)')
+        [{'scientificName': 'Vanessa atalanta', ...}]
+    """
+    # URL encode the name
+    encoded_name = name.replace(" ", "%20")
+    url = f"{GBIF_BASE_URL}parser/name?name={encoded_name}"
+    return gbif_GET(url, None, **kwargs)
 
 
-def bn(x):
-    if x:
-        return x
+def name_usage(
+    key: Optional[int] = None,
+    name: Optional[str] = None,
+    data: str = "all",
+    language: Optional[str] = None,
+    datasetKey: Optional[str] = None,
+    uuid: Optional[str] = None,
+    sourceId: Optional[int] = None,
+    rank: Optional[str] = None,
+    shortname: Optional[str] = None,
+    limit: int = 100,
+    offset: Optional[int] = None,
+    **kwargs,
+) -> Union[Dict[str, Any], List[Dict[str, Any]]]:
+    """Lookup details for specific names in all taxonomies in GBIF.
+
+    Args:
+        key: A GBIF key for a taxon.
+        name: Filters by a case insensitive, canonical namestring.
+        data: The type of data to get. Options: 'all', 'verbatim', 'name',
+            'parents', 'children', 'related', 'synonyms', 'descriptions',
+            'distributions', 'media', 'references', 'speciesProfiles',
+            'vernacularNames', 'typeSpecimens', 'root'.
+        language: Language filter (e.g., 'FRENCH').
+        datasetKey: Filter by dataset UUID.
+        uuid: A uuid for a dataset (same as datasetKey).
+        sourceId: Filter by source identifier.
+        rank: Taxonomic rank filter (e.g., 'SPECIES', 'GENUS').
+        shortname: A short name.
+        limit: Number of records to return (default: 100, max: 1000).
+        offset: Record number to start at.
+
+    Returns:
+        Species information dictionary or list of dictionaries.
+
+    Reference:
+        https://www.gbif.org/developer/species#nameUsages
+
+    Example:
+        >>> name_usage(key=5219404)
+        {'key': 5219404, 'scientificName': 'Panthera leo', ...}
+    """
+    data_choices = [
+        "all",
+        "verbatim",
+        "name",
+        "parents",
+        "children",
+        "related",
+        "synonyms",
+        "descriptions",
+        "distributions",
+        "media",
+        "references",
+        "speciesProfiles",
+        "vernacularNames",
+        "typeSpecimens",
+        "root",
+    ]
+
+    if data not in data_choices:
+        raise ValueError(f"data must be one of: {', '.join(data_choices)}")
+
+    return _name_usage_fetch(data, key, shortname, uuid, **kwargs)
+
+
+def _name_usage_fetch(
+    data: str,
+    key: Optional[int],
+    shortname: Optional[str],
+    uuid: Optional[str],
+    **kwargs,
+) -> Dict[str, Any]:
+    """Internal function to fetch name usage data.
+
+    Args:
+        data: Type of data to fetch.
+        key: GBIF taxon key.
+        shortname: Short name.
+        uuid: Dataset UUID.
+
+    Returns:
+        Species information dictionary.
+    """
+    if data != "all" and key is None:
+        raise TypeError("You must specify 'key' if 'data' does not equal 'all'")
+
+    if data == "all" and key is None:
+        url = f"{GBIF_BASE_URL}species"
+    elif data == "all" and key is not None:
+        url = f"{GBIF_BASE_URL}species/{key}"
+    elif data in [
+        "verbatim",
+        "name",
+        "parents",
+        "children",
+        "related",
+        "synonyms",
+        "descriptions",
+        "distributions",
+        "media",
+        "references",
+        "speciesProfiles",
+        "vernacularNames",
+        "typeSpecimens",
+    ]:
+        url = f"{GBIF_BASE_URL}species/{key}/{data}"
+    elif data == "root":
+        url = f"{GBIF_BASE_URL}species/{uuid}/{shortname}"
     else:
-        return None
+        raise ValueError(f"Unknown data type: {data}")
 
-
-def check_data(x, y):
-    if len2(x) == 1:
-        testdata = [x]
-    else:
-        testdata = x
-
-    for z in testdata:
-        if z not in y:
-            raise TypeError(z + ' is not one of the choices')
-
-
-def len2(x):
-    if x.__class__ is str:
-        return len([x])
-    else:
-        return len(x)
-
-
-def get_meta(x):
-    if has_meta(x):
-        return {z: x[z] for z in ['offset', 'limit', 'endOfRecords']}
-    else:
-        return None
-
-
-def has_meta(x):
-    if x.__class__ != dict:
-        return False
-    else:
-        tmp = [y in x.keys() for y in ['offset', 'limit', 'endOfRecords']]
-        return True in tmp
-
-
-def name_parser(name, **kwargs):
-  '''
-  Parse taxon names using the GBIF name parser
-
-  :param name: [str] A character vector of scientific names. (required)
-
-  reference: http://www.gbif.org/developer/species#parser
-
-  Usage::
-
-      from pygbif import species
-      species.name_parser('x Agropogon littoralis')
-      species.name_parser(['Arrhenatherum elatius var. elatius',
-        'Secale cereale subsp. cereale', 'Secale cereale ssp. cereale',
-        'Vanessa atalanta (Linnaeus, 1758)'])
-  '''
-  url = gbif_baseurl + 'parser/name?name=' + name
-  return gbif_GET(url, name, **kwargs)
-
-
-def name_usage(key=None, name=None, data='all', language=None,
-               datasetKey=None, uuid=None, sourceId=None, rank=None,
-               shortname=None,
-               limit=100, offset=None, **kwargs):
-    '''
-    Lookup details for specific names in all taxonomies in GBIF.
-
-    :param key: [fixnum] A GBIF key for a taxon
-    :param name: [str] Filters by a case insensitive, canonical namestring,
-         e.g. 'Puma concolor'
-    :param data: [str] The type of data to get. Default: ``all``. Options: ``all``,
-        ``verbatim``, ``name``, ``parents``, ``children``,
-        ``related``, ``synonyms``, ``descriptions``, ``distributions``, ``media``,
-        ``references``, ``speciesProfiles``, ``vernacularNames``, ``typeSpecimens``,
-        ``root``
-    :param language: [str] Language, default is english
-    :param datasetKey: [str] Filters by the dataset's key (a uuid)
-    :param uuid: [str] A uuid for a dataset. Should give exact same results as datasetKey.
-    :param sourceId: [fixnum] Filters by the source identifier.
-    :param rank: [str] Taxonomic rank. Filters by taxonomic rank as one of:
-            ``CLASS``, ``CULTIVAR``, ``CULTIVAR_GROUP``, ``DOMAIN``, ``FAMILY``, ``FORM``, ``GENUS``, ``INFORMAL``,
-            ``INFRAGENERIC_NAME``, ``INFRAORDER``, ``INFRASPECIFIC_NAME``, ``INFRASUBSPECIFIC_NAME``,
-            ``KINGDOM``, ``ORDER``, ``PHYLUM``, ``SECTION``, ``SERIES``, ``SPECIES``, ``STRAIN``, ``SUBCLASS``, ``SUBFAMILY``,
-            ``SUBFORM``, ``SUBGENUS``, ``SUBKINGDOM``, ``SUBORDER``, ``SUBPHYLUM``, ``SUBSECTION``, ``SUBSERIES``,
-            ``SUBSPECIES``, ``SUBTRIBE``, ``SUBVARIETY``, ``SUPERCLASS``, ``SUPERFAMILY``, ``SUPERORDER``,
-            ``SUPERPHYLUM``, ``SUPRAGENERIC_NAME``, ``TRIBE``, ``UNRANKED``, ``VARIETY``
-    :param shortname: [str] A short name..need more info on this?
-    :param limit: [fixnum] Number of records to return. Default: ``100``. Maximum: ``1000``. (optional)
-    :param offset: [fixnum] Record number to start at. (optional)
-
-    References: http://www.gbif.org/developer/species#nameUsages
-
-    Usage::
-
-            from pygbif import species
-
-            species.name_usage(key=1)
-
-            # Name usage for a taxonomic name
-            species.name_usage(name='Puma', rank="GENUS")
-
-            # All name usages
-            species.name_usage()
-
-            # References for a name usage
-            species.name_usage(key=2435099, data='references')
-
-            # Species profiles, descriptions
-            species.name_usage(key=3119195, data='speciesProfiles')
-            species.name_usage(key=3119195, data='descriptions')
-            species.name_usage(key=2435099, data='children')
-
-            # Vernacular names for a name usage
-            species.name_usage(key=3119195, data='vernacularNames')
-
-            # Limit number of results returned
-            species.name_usage(key=3119195, data='vernacularNames', limit=3)
-
-            # Search for names by dataset with datasetKey parameter
-            species.name_usage(datasetKey="d7dddbf4-2cf0-4f39-9b2a-bb099caae36c")
-
-            # Search for a particular language
-            species.name_usage(key=3119195, language="FRENCH", data='vernacularNames')
-    '''
-    args = {'language': language, 'name': name, 'datasetKey': datasetKey,
-            'rank': rank, 'sourceId': sourceId, 'limit': limit,
-            'offset': offset}
-    data_choices = ['all', 'verbatim', 'name', 'parents', 'children',
-                    'related', 'synonyms', 'descriptions',
-                    'distributions', 'media', 'references', 'speciesProfiles',
-                    'vernacularNames', 'typeSpecimens', 'root']
-    check_data(data, data_choices)
-    if len2(data) == 1:
-        return name_usage_fetch(data, key, shortname, uuid, args, **kwargs)
-    else:
-        return [name_usage_fetch(x, key, shortname, uuid, args, **kwargs) for x
-                in data]
-
-
-def name_usage_fetch(x, key, shortname, uuid, args, **kwargs):
-    if x is not 'all' and key is None:
-        raise TypeError(
-            'You must specify `key` if `data` does not equal `all`')
-
-    if x is 'all' and key is None:
-        url = gbif_baseurl + 'species'
-    else:
-        if x is 'all' and key is not None:
-            url = gbif_baseurl + 'species/' + str(key)
-        else:
-            if x in ['verbatim', 'name', 'parents', 'children', 'related',
-                     'synonyms', 'descriptions',
-                     'distributions', 'media', 'references', 'speciesProfiles',
-                     'vernacularNames', 'typeSpecimens']:
-                url = gbif_baseurl + 'species/%s/%s' % (str(key), x)
-            else:
-                if x is 'root':
-                    url = gbif_baseurl + 'species/%s/%s' % (uuid, shortname)
-
-    res = gbif_GET(url, args, **kwargs)
-    return res
+    return gbif_GET(url, None, **kwargs)

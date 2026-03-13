@@ -1,0 +1,99 @@
+---
+# Pre-commit hooks configuration for SpeciesExplorer
+# Run: pre-commit install
+# Manual: pre-commit run --all-files
+
+repos:
+  # Standard pre-commit hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: end-of-file-fixer
+        exclude: ^(.*\.svg|.*\.qml)$
+      - id: trailing-whitespace
+        exclude: ^(.*\.svg|.*\.qml)$
+      - id: check-yaml
+      - id: check-json
+      - id: check-added-large-files
+        args: ['--maxkb=500']
+      - id: check-merge-conflict
+      - id: detect-private-key
+
+  # Python code formatting
+  - repo: https://github.com/psf/black
+    rev: 24.4.0
+    hooks:
+      - id: black
+        language_version: python3
+
+  # Python import sorting
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        args: ["--profile", "black"]
+
+  # Python linting
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.0.0
+    hooks:
+      - id: flake8
+        additional_dependencies:
+          - flake8-docstrings
+          - pydocstyle
+
+  # Local hooks
+  - repo: local
+    hooks:
+      # Remove core dump files
+      - id: remove-core-files
+        name: Remove core files
+        entry: bash -c 'find . -name "core" -type f -delete; exit 0'
+        language: system
+        pass_filenames: false
+
+      # Check UTF-8 encoding declaration
+      - id: encoding-check
+        name: Check Python encoding declarations
+        entry: ./scripts/encoding_check.sh
+        language: script
+        files: \.py$
+        exclude: ^(test/|\.venv/)
+
+      # Nix formatting (optional - requires nixfmt)
+      - id: nixfmt
+        name: Format Nix files
+        entry: nixfmt
+        language: system
+        files: \.nix$
+        pass_filenames: true
+
+      # YAML linting
+      - id: yamllint
+        name: Lint YAML files
+        entry: yamllint -c .yamllint
+        language: system
+        files: \.(yaml|yml)$
+
+      # Shell script checking
+      - id: shellcheck
+        name: Check shell scripts
+        entry: shellcheck
+        language: system
+        files: \.sh$
+
+      # Security scanning
+      - id: bandit
+        name: Security scan (bandit)
+        entry: bandit -c .bandit.yml -r species_explorer
+        language: system
+        pass_filenames: false
+        files: \.py$
+
+      # Spell checking (Markdown)
+      - id: cspell
+        name: Spell check
+        entry: cspell --no-progress
+        language: system
+        files: \.(md|rst|txt)$
+        exclude: ^(requirements.*\.txt|REQUIREMENTS.*\.txt)$

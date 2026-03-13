@@ -1,0 +1,119 @@
+/* Species Explorer Documentation Styles */
+
+/* Custom color scheme */
+:root {
+  --md-primary-fg-color: #2e7d32;
+  --md-primary-fg-color--light: #4caf50;
+  --md-primary-fg-color--dark: #1b5e20;
+  --md-accent-fg-color: #8bc34a;
+}
+
+/* Header styling */
+.md-header {
+  background-color: var(--md-primary-fg-color);
+}
+
+/* Hero section on home page */
+.md-typeset h1 {
+  color: var(--md-primary-fg-color);
+}
+
+/* Code blocks */
+.md-typeset code {
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+
+[data-md-color-scheme="slate"] .md-typeset code {
+  background-color: #333;
+}
+
+/* Cards styling */
+.md-typeset .grid.cards > ul > li {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1rem;
+  transition: box-shadow 0.2s;
+}
+
+.md-typeset .grid.cards > ul > li:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Tables */
+.md-typeset table:not([class]) {
+  border-collapse: collapse;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.md-typeset table:not([class]) th {
+  background-color: var(--md-primary-fg-color);
+  color: white;
+}
+
+/* Admonitions */
+.md-typeset .admonition.tip,
+.md-typeset details.tip {
+  border-color: var(--md-accent-fg-color);
+}
+
+/* Footer */
+.md-footer {
+  background-color: #1a1a1a;
+}
+
+/* Kartoza branding in footer */
+.md-copyright {
+  font-size: 0.8rem;
+}
+
+/* Button styling */
+.md-typeset .md-button {
+  border-radius: 25px;
+  padding: 0.6em 1.5em;
+}
+
+.md-typeset .md-button--primary {
+  background-color: var(--md-primary-fg-color);
+  border-color: var(--md-primary-fg-color);
+}
+
+.md-typeset .md-button--primary:hover {
+  background-color: var(--md-primary-fg-color--dark);
+  border-color: var(--md-primary-fg-color--dark);
+}
+
+/* Navigation */
+.md-nav__link--active {
+  color: var(--md-primary-fg-color) !important;
+  font-weight: 600;
+}
+
+/* Search */
+.md-search__input {
+  border-radius: 25px;
+}
+
+/* Mermaid diagrams */
+.mermaid {
+  text-align: center;
+  padding: 1rem;
+}
+
+/* Screenshots and images */
+.md-typeset img {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Center-aligned content helper */
+.md-typeset [align="center"] {
+  text-align: center;
+}
+
+/* Icon styling in cards */
+.md-typeset .grid.cards .lg {
+  font-size: 2rem;
+  color: var(--md-primary-fg-color);
+}

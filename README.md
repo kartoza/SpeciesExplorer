@@ -1,52 +1,115 @@
-# SpeciesExplorer
+# Species Explorer
 
-SpeciesExplorer is a QGIS (3 or greater) plugin for quickly retrieving species occurrence data from GBIF (http://gbif.org).
+<div align="center">
+  <img src="species_explorer/icon.svg" alt="Species Explorer" width="128">
+  <p><strong>QGIS Plugin for Exploring Biodiversity Data from GBIF</strong></p>
+</div>
 
-[![IMAGE ALT TEXT](http://img.youtube.com/vi/La2ml0yDW6M/0.jpg)](http://www.youtube.com/watch?v=La2ml0yDW6M "Species Explorer")
+---
 
+[![CI](https://github.com/kartoza/SpeciesExplorer/actions/workflows/ci.yml/badge.svg)](https://github.com/kartoza/SpeciesExplorer/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/kartoza/SpeciesExplorer)](https://github.com/kartoza/SpeciesExplorer/releases)
+[![License](https://img.shields.io/github/license/kartoza/SpeciesExplorer)](LICENSE)
+[![QGIS](https://img.shields.io/badge/QGIS-3.0%2B-green)](https://qgis.org)
+[![Documentation](https://img.shields.io/badge/docs-mkdocs-blue)](https://kartoza.github.io/SpeciesExplorer)
 
-# Goals
+## Overview
 
-I  published a plugin about 8 years ago that fetched GBIF data in QGIS. It was part of a toolkit for running [openModeller](http://openmodeller.sourceforge.net) for performing ecological niche modelling. But the plugin was written in C++ and not easy to maintain or distribute to different platforms. I am aiming to eventually re-instate openModeller support in QGIS but using an approach that makes it more broadly accessible. The plugin will fetch the openModeller C++ compiled binary for your platform and the rest will be written in python to make it easier to maintain and extend (and hopefully garner contributions from others).
+Species Explorer is a QGIS plugin for quickly retrieving and visualizing species occurrence data from [GBIF](https://www.gbif.org/) (Global Biodiversity Information Facility).
 
-## Funders wanted
+[![Video Demo](http://img.youtube.com/vi/La2ml0yDW6M/0.jpg)](http://www.youtube.com/watch?v=La2ml0yDW6M "Species Explorer Demo")
 
-If you are interested and able to fund this work please contact me.
+## Features
 
-## How it works
+- **Search Species** - Find species by scientific or common name
+- **View Taxonomy** - Display full taxonomic hierarchy
+- **Fetch Occurrences** - Download occurrence records from GBIF
+- **Visualize Data** - Create point layers directly in QGIS
+- **Analyze** - Use QGIS tools for spatial analysis
 
-The plugin will create an in-memory layer for each search result. The attribute table of the layer will contain all the standard metadata returned by a GBIF occurrence search. To save the layer permanently, right click on it and use the built-in QGIS "save as" functionality.
+## Quick Start
 
-You can install the plugin from the QGIS plugin repository as shown in the above video. Alternatively you can get the release zip file from the [releases page](https://github.com/kartoza/SpeciesExplorer/releases) and install it using the 'Install from Zip' in the QGIS plugin manager tab.
+1. **Install** from QGIS Plugin Manager (search "Species Explorer")
+2. **Open** via Plugins menu or toolbar
+3. **Search** for a species by name
+4. **Fetch** occurrence data
+5. **Explore** on the map!
 
-<img width="875" alt="screen shot 2018-09-17 at 07 27 42" src="https://user-images.githubusercontent.com/178003/45607302-ced24380-ba4b-11e8-8d86-b6020d109b87.png">
+![Screenshot](https://user-images.githubusercontent.com/178003/45607302-ced24380-ba4b-11e8-8d86-b6020d109b87.png)
 
+## Installation
 
-# Contributing and reporting issues
+### From Plugin Manager (Recommended)
 
-I would welcome any contributions, please do so via a [pull request](https://github.com/kartoza/SpeciesExplorer/pulls). If you encounter any bugs with the plugin, please file an [issue](https://github.com/kartoza/SpeciesExplorer/issues).
+1. Open QGIS
+2. Go to **Plugins** → **Manage and Install Plugins**
+3. Search for "Species Explorer"
+4. Click **Install Plugin**
 
-# Developer notes
+### From ZIP
 
-## MacOS
+1. Download latest release from [Releases](https://github.com/kartoza/SpeciesExplorer/releases)
+2. In QGIS: **Plugins** → **Manage and Install Plugins** → **Install from ZIP**
 
-If you are trying to run tests on macOS and PyCharm you may need to explcitly
-set the QGIS_PREFIX_PATH environment variable. Edit the
+## Documentation
 
-```Run -> Edit Configurations -> Defaults -> Python Tests -> UnitTests```
+- [User Guide](https://kartoza.github.io/SpeciesExplorer/user-guide/)
+- [Developer Guide](https://kartoza.github.io/SpeciesExplorer/developer/)
+- [API Reference](https://kartoza.github.io/SpeciesExplorer/developer/api/)
 
-Configuration defaults and add the following environment variable:
+## Development
 
+### Setup with Nix (Recommended)
 
-```QGIS_PREFIX_PATH=﻿/Users/timlinux/dev/cpp/QGIS-QtCreator-Build/output/```
+```bash
+git clone https://github.com/kartoza/SpeciesExplorer.git
+cd SpeciesExplorer
+nix develop
+```
 
-![screen shot 2018-09-24 at 00 31 20](https://user-images.githubusercontent.com/178003/45933752-4dbb0500-bf93-11e8-8b71-216a998d8731.png)
+### Common Commands
 
-Now right click the tests folder in the project panel and choose "Run UnitTests in test".
+```bash
+nix run .#qgis      # Launch QGIS with plugin
+nix run .#test      # Run tests
+nix run .#format    # Format code
+nix run .#lint      # Lint code
+nix run .#docs-serve  # Serve documentation
+```
 
-![screen shot 2018-09-24 at 00 57 34](https://user-images.githubusercontent.com/178003/45933878-793eef00-bf95-11e8-80c4-4a5198a97b17.png)
+### Neovim
 
-# Contact / credits
+The repository includes `.exrc` and `.nvim.lua` for integrated development. All project commands are available under `<leader>p`.
 
-This plugin was developed by Tim Sutton
-tim@kartoza.com
+## Contributing
+
+Contributions are welcome! Please see our [Contributing Guide](https://kartoza.github.io/SpeciesExplorer/developer/contributing/).
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Run checks (`nix run .#checks`)
+4. Commit your changes
+5. Push to the branch
+6. Open a Pull Request
+
+## Support
+
+- [Report Issues](https://github.com/kartoza/SpeciesExplorer/issues)
+- [Request Features](https://github.com/kartoza/SpeciesExplorer/issues/new?template=feature_request.md)
+- [GitHub Discussions](https://github.com/kartoza/SpeciesExplorer/discussions)
+
+## License
+
+This project is licensed under the GPL-2.0 License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- [GBIF](https://www.gbif.org/) - Global Biodiversity Information Facility
+- [pygbif](https://github.com/gbif/pygbif) - Python client for GBIF (Scott Chamberlain)
+- [QGIS](https://qgis.org/) - Open Source Geographic Information System
+
+---
+
+<div align="center">
+  <p>Made with :heart: by <a href="https://kartoza.com">Kartoza</a> | <a href="https://github.com/sponsors/timlinux">Donate</a> | <a href="https://github.com/kartoza/SpeciesExplorer">GitHub</a></p>
+</div>

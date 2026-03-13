@@ -1,0 +1,243 @@
+/*
+ * Kartoza Branding Stylesheet for Species Explorer
+ * Color Palette:
+ *   Primary Dark Green: #589632
+ *   Secondary Light Green: #93b023
+ *   Accent Gold: #E8B849
+ */
+
+/* === GLOBAL === */
+QDialog, QWidget {
+    font-family: "Segoe UI", "Ubuntu", "Noto Sans", sans-serif;
+}
+
+/* === GROUP BOXES === */
+QGroupBox {
+    border: 2px solid #589632;
+    border-radius: 8px;
+    margin-top: 12px;
+    padding-top: 8px;
+    font-weight: bold;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    left: 10px;
+    padding: 2px 8px;
+    background-color: #589632;
+    color: white;
+    border-radius: 4px;
+}
+
+/* === PUSH BUTTONS === */
+QPushButton {
+    background-color: #589632;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 20px;
+    font-weight: bold;
+    min-height: 24px;
+}
+
+QPushButton:hover {
+    background-color: #93b023;
+}
+
+QPushButton:pressed {
+    background-color: #4a7d2a;
+}
+
+QPushButton:disabled {
+    background-color: #a0a0a0;
+    color: #666666;
+}
+
+QPushButton:default {
+    border: 2px solid #E8B849;
+}
+
+/* === LINE EDIT === */
+QLineEdit {
+    border: 2px solid #c0c0c0;
+    border-radius: 6px;
+    padding: 6px 10px;
+    min-height: 20px;
+}
+
+QLineEdit:focus {
+    border-color: #589632;
+}
+
+QLineEdit:hover {
+    border-color: #93b023;
+}
+
+/* === COMBO BOX === */
+QComboBox {
+    border: 2px solid #c0c0c0;
+    border-radius: 6px;
+    padding: 6px 10px;
+    min-height: 20px;
+}
+
+QComboBox:focus {
+    border-color: #589632;
+}
+
+QComboBox:hover {
+    border-color: #93b023;
+}
+
+QComboBox::drop-down {
+    border: none;
+    width: 24px;
+}
+
+QComboBox::down-arrow {
+    width: 12px;
+    height: 12px;
+}
+
+QComboBox QAbstractItemView {
+    border: 2px solid #589632;
+    border-radius: 4px;
+    selection-background-color: #589632;
+    selection-color: white;
+}
+
+/* === LIST WIDGET === */
+QListWidget {
+    border: 2px solid #c0c0c0;
+    border-radius: 6px;
+    padding: 4px;
+    alternate-background-color: rgba(147, 176, 35, 0.1);
+}
+
+QListWidget:focus {
+    border-color: #589632;
+}
+
+QListWidget::item {
+    padding: 8px;
+    border-radius: 4px;
+}
+
+QListWidget::item:selected {
+    background-color: #589632;
+    color: white;
+}
+
+QListWidget::item:hover:!selected {
+    background-color: rgba(147, 176, 35, 0.3);
+}
+
+/* === PROGRESS BAR === */
+QProgressBar {
+    border: 2px solid #c0c0c0;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+    min-height: 24px;
+}
+
+QProgressBar::chunk {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 #589632, stop:0.5 #93b023, stop:1 #589632);
+    border-radius: 6px;
+}
+
+/* === LABELS === */
+QLabel {
+    color: palette(text);
+}
+
+QLabel#header_label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #589632;
+    padding: 8px;
+}
+
+QLabel#section_label {
+    font-size: 13px;
+    font-weight: bold;
+    color: #4a7d2a;
+    padding: 4px;
+}
+
+/* === DIALOG BUTTON BOX === */
+QDialogButtonBox QPushButton {
+    min-width: 80px;
+}
+
+/* === SCROLL BARS === */
+QScrollBar:vertical {
+    border: none;
+    width: 12px;
+    margin: 0;
+}
+
+QScrollBar::handle:vertical {
+    background-color: #589632;
+    border-radius: 6px;
+    min-height: 30px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background-color: #93b023;
+}
+
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical {
+    height: 0;
+}
+
+QScrollBar:horizontal {
+    border: none;
+    height: 12px;
+    margin: 0;
+}
+
+QScrollBar::handle:horizontal {
+    background-color: #589632;
+    border-radius: 6px;
+    min-width: 30px;
+}
+
+QScrollBar::handle:horizontal:hover {
+    background-color: #93b023;
+}
+
+QScrollBar::add-line:horizontal,
+QScrollBar::sub-line:horizontal {
+    width: 0;
+}
+
+/* === TOOL TIPS === */
+QToolTip {
+    border: 2px solid #589632;
+    border-radius: 6px;
+    padding: 8px;
+    font-size: 12px;
+}
+
+/* === KARTOZA FOOTER === */
+QLabel#kartoza_footer {
+    color: #589632;
+    font-size: 11px;
+    padding: 8px;
+}
+
+QLabel#kartoza_footer a {
+    color: #93b023;
+    text-decoration: none;
+}
+
+/* === STATUS LABEL === */
+QLabel#status_label {
+    color: #589632;
+    font-style: italic;
+    padding: 4px;
+}

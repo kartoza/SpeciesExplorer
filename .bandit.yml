@@ -1,0 +1,54 @@
+# Bandit security scanner configuration for SpeciesExplorer
+# https://bandit.readthedocs.io/
+
+# Exclude test directories from security scanning
+exclude_dirs:
+  - test
+  - tests
+  - .venv
+  - venv
+  - build
+  - dist
+
+# Skip these test IDs
+skips:
+  # B101: Use of assert detected
+  # Acceptable in test code and development assertions
+  - B101
+
+  # B104: Possible binding to all interfaces
+  # May be needed for development servers
+  - B104
+
+  # B108: Probable insecure usage of temp file/directory
+  # Acceptable for temporary processing
+  - B108
+
+  # B110: Try, Except, Pass detected
+  # Sometimes acceptable for optional functionality
+  - B110
+
+  # B404: Consider possible security implications associated with subprocess module
+  # Necessary for QGIS integration and system commands
+  - B404
+
+  # B603: subprocess call - check for execution of untrusted input
+  # We control the input in our plugin context
+  - B603
+
+  # B607: Starting a process with a partial executable path
+  # Acceptable for known commands
+  - B607
+
+# Severity levels to report (LOW, MEDIUM, HIGH)
+# Only report MEDIUM and HIGH severity issues
+severity: MEDIUM
+
+# Confidence levels to report (LOW, MEDIUM, HIGH)
+confidence: MEDIUM
+
+# Note: High severity issues must always be fixed:
+# - Hardcoded passwords/secrets
+# - SQL injection vulnerabilities
+# - Command injection vulnerabilities
+# - Insecure deserialization

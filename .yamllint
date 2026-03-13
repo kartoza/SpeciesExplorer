@@ -1,0 +1,32 @@
+---
+# YAML linting configuration for SpeciesExplorer
+
+extends: default
+
+rules:
+  line-length:
+    max: 120
+    level: warning
+
+  truthy:
+    allowed-values: ['true', 'false', 'on', 'off', 'yes', 'no']
+
+  indentation:
+    spaces: 2
+    indent-sequences: true
+
+  comments:
+    require-starting-space: true
+    min-spaces-from-content: 1
+
+  document-start: disable
+
+  empty-lines:
+    max: 2
+    max-start: 0
+    max-end: 1
+
+ignore: |
+  .venv/
+  node_modules/
+  .direnv/

@@ -1,39 +1,45 @@
-# This file contains metadata for your plugin. Since
-# version 2.0 of QGIS this is the proper way to supply
-# information about a plugin. The old method of
-# embedding metadata in __init__.py will
-# is no longer supported since version 2.0.
-
-# This file should be included when you package your plugin.# Mandatory items:
+# This file contains metadata for your plugin.
+# QGIS plugin metadata specification:
+# https://docs.qgis.org/latest/en/docs/pyqgis_developer_cookbook/plugins/plugins.html#plugin-metadata
 
 [general]
 name=Species Explorer
 qgisMinimumVersion=3.0
-description=Quickly fetch and visualise species occurrence data.
-version=0.1
+qgisMaximumVersion=4.99
+description=Quickly fetch and visualize species occurrence data from GBIF.
+version=0.2.1
 author=Kartoza
 email=tim@kartoza.com
+license=GPLv3
 
-about=This plugin is a client to GBIF (the Global Biodiversity Information Facility) and in future other services that allow you to easily add species occurrence data to QGIS. This plugin includes code from teh pygbif project by Mike Chamberlain.
+about=Species Explorer is a QGIS plugin for exploring biodiversity data from the Global Biodiversity Information Facility (GBIF). Search for species by scientific or common name, view taxonomic hierarchies, fetch occurrence records, and visualize species distributions directly in QGIS. Made with love by Kartoza (https://kartoza.com).
 
 tracker=https://github.com/kartoza/SpeciesExplorer/issues
 repository=https://github.com/kartoza/SpeciesExplorer
-# End of mandatory metadata
 
-# Recommended items:
+# Changelog
+changelog=
+    0.2.0 - Modernized tooling (Nix flake, GitHub Actions, mkdocs, pre-commit)
+    0.1.0 - Initial release
 
-# Uncomment the following line and add your changelog:
-# changelog=
+# Tags
+tags=biodiversity, gbif, species, occurrence, ecology, conservation, wildlife
 
-# Tags are comma separated with spaces allowed
-tags=biodiversity
-
-homepage=https://github.com/kartoza/SpeciesExplorer
+homepage=https://kartoza.github.io/SpeciesExplorer
 category=Web
 icon=icon.png
-# experimental flag
+
+# Experimental flag
 experimental=False
 
-# deprecated flag (applies to the whole plugin, not just a single version)
+# Deprecated flag
 deprecated=False
 
+# Server flag (for server plugins)
+server=False
+
+# Plugin dependencies (comma separated list of plugin names)
+# plugin_dependencies=
+
+# If the plugin can run on QGIS Server
+hasProcessingProvider=no

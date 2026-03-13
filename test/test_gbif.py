@@ -8,14 +8,14 @@
 
 """
 
-__author__ = 'tim@kartoza.com'
-__date__ = '2018-06-22'
-__copyright__ = 'Copyright 2018, Kartoza'
+__author__ = "tim@kartoza.com"
+__date__ = "2018-06-22"
+__copyright__ = "Copyright 2018, Kartoza"
 
 import unittest
+from test.utilities import get_qgis_app
 
 from species_explorer.gbifutils import name_usage
-from test.utilities import get_qgis_app
 
 QGIS_APP = get_qgis_app()
 
@@ -36,8 +36,8 @@ class TestGBIF(unittest.TestCase):
 
         species = name_usage(3329049)
 
+
 if __name__ == "__main__":
     suite = unittest.makeSuite(TestGBIF)
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite)
-

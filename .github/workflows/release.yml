@@ -1,0 +1,154 @@
+---
+# Release workflow for SpeciesExplorer
+# Creates GitHub releases and plugin packages when tags are pushed
+
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release (e.g., 0.2.0)"
+        required: true
+
+env:
+  PLUGIN_NAME: SpeciesExplorer
+
+jobs:
+  build-and-release:
+    name: Build and Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Get version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION="${GITHUB_REF#refs/tags/v}"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+
+      - name: Update metadata version
+        run: |
+          sed -i "s/^version=.*/version=${{ steps.version.outputs.version }}/" metadata.txt
+
+      - name: Build plugin package
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          PACKAGE_NAME="${PLUGIN_NAME}-${VERSION}.zip"
+
+          # Create plugin directory structure
+          mkdir -p build/${PLUGIN_NAME}
+
+          # Copy plugin files
+          cp -r species_explorer/* build/${PLUGIN_NAME}/
+          cp metadata.txt build/${PLUGIN_NAME}/
+          cp LICENSE build/${PLUGIN_NAME}/ 2>/dev/null || cp COPYING build/${PLUGIN_NAME}/ 2>/dev/null || true
+
+          # Remove unnecessary files
+          find build/${PLUGIN_NAME} -name "*.pyc" -delete
+          find build/${PLUGIN_NAME} -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+          find build/${PLUGIN_NAME} -name "*.git*" -delete 2>/dev/null || true
+          rm -rf build/${PLUGIN_NAME}/test 2>/dev/null || true
+
+          # Create zip
+          cd build
+          zip -r ../${PACKAGE_NAME} ${PLUGIN_NAME}
+          cd ..
+
+          echo "package_name=${PACKAGE_NAME}" >> $GITHUB_OUTPUT
+          echo "Created: ${PACKAGE_NAME}"
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          # Get commits since last tag
+          LAST_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          if [ -n "$LAST_TAG" ]; then
+            COMMITS=$(git log ${LAST_TAG}..HEAD --pretty=format:"- %s" --no-merges)
+          else
+            COMMITS=$(git log --pretty=format:"- %s" --no-merges -20)
+          fi
+
+          # Create release notes
+          cat > release_notes.md << EOF
+          ## Species Explorer v${{ steps.version.outputs.version }}
+
+          ### Changes
+
+          ${COMMITS}
+
+          ### Installation
+
+          1. Download \`${PLUGIN_NAME}-${{ steps.version.outputs.version }}.zip\`
+          2. In QGIS, go to Plugins → Manage and Install Plugins → Install from ZIP
+          3. Select the downloaded file and click Install
+
+          ### Links
+
+          - [Documentation](https://kartoza.github.io/SpeciesExplorer)
+          - [Issue Tracker](https://github.com/kartoza/SpeciesExplorer/issues)
+
+          ---
+          Made with love by [Kartoza](https://kartoza.com)
+          EOF
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: "Species Explorer v${{ steps.version.outputs.version }}"
+          body_path: release_notes.md
+          files: |
+            ${{ env.PLUGIN_NAME }}-${{ steps.version.outputs.version }}.zip
+          draft: false
+          prerelease: ${{ contains(steps.version.outputs.version, 'alpha') || contains(steps.version.outputs.version, 'beta') || contains(steps.version.outputs.version, 'rc') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Deploy documentation
+  docs:
+    name: Deploy Documentation
+    runs-on: ubuntu-latest
+    needs: build-and-release
+
+    permissions:
+      contents: write
+      pages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install mkdocs
+        run: |
+          pip install mkdocs mkdocs-material pymdown-extensions
+
+      - name: Build documentation
+        run: mkdocs build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site

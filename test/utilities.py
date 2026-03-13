@@ -1,11 +1,10 @@
 # coding=utf-8
 """Common functionality used by regression tests."""
 
-import sys
 import logging
+import sys
 
-
-LOGGER = logging.getLogger('QGIS')
+LOGGER = logging.getLogger("QGIS")
 QGIS_APP = None  # Static variable used to hold hand to running QGIS app
 CANVAS = None
 PARENT = None
@@ -13,7 +12,7 @@ IFACE = None
 
 
 def get_qgis_app():
-    """ Start one QGIS application to test against.
+    """Start one QGIS application to test against.
 
     :returns: Handle to QGIS app, canvas, iface and parent. If there are any
         errors the tuple members will be returned as None.
@@ -23,9 +22,9 @@ def get_qgis_app():
     """
 
     try:
-        from qgis.PyQt import QtGui, QtCore, QtWidgets
         from qgis.core import QgsApplication
         from qgis.gui import QgsMapCanvas
+        from qgis.PyQt import QtCore, QtGui, QtWidgets
         from qgis.testing import start_app
     except ImportError:
         return None, None, None, None
@@ -33,27 +32,28 @@ def get_qgis_app():
     global QGIS_APP  # pylint: disable=W0603
 
     if QGIS_APP is None:
-        #noinspection PyPep8Naming
+        # noinspection PyPep8Naming
         QGIS_APP = start_app()
         s = QGIS_APP.showSettings()
         LOGGER.debug(s)
 
     global PARENT  # pylint: disable=W0603
     if PARENT is None:
-        #noinspection PyPep8Naming
+        # noinspection PyPep8Naming
         PARENT = QtWidgets.QWidget()
 
     global CANVAS  # pylint: disable=W0603
     if CANVAS is None:
-        #noinspection PyPep8Naming
+        # noinspection PyPep8Naming
         CANVAS = QgsMapCanvas(PARENT)
         CANVAS.resize(QtCore.QSize(400, 400))
 
     global IFACE  # pylint: disable=W0603
     if IFACE is None:
         from test.qgis_interface import QgisInterface
+
         # QgisInterface is a stub implementation of the QGIS plugin interface
-        #noinspection PyPep8Naming
+        # noinspection PyPep8Naming
         IFACE = QgisInterface(CANVAS)
 
     return QGIS_APP, CANVAS, IFACE, PARENT

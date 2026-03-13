@@ -6,78 +6,151 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>554</width>
-    <height>457</height>
+    <width>650</width>
+    <height>550</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>500</width>
+    <height>400</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Species Explorer</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Taxon search</string>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>12</number>
+   </property>
+   <property name="leftMargin">
+    <number>12</number>
+   </property>
+   <property name="topMargin">
+    <number>12</number>
+   </property>
+   <property name="rightMargin">
+    <number>12</number>
+   </property>
+   <property name="bottomMargin">
+    <number>12</number>
+   </property>
+   <item>
+    <widget class="QGroupBox" name="search_group">
+     <property name="title">
+      <string>Search Species</string>
      </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="spacing">
+       <number>8</number>
+      </property>
+      <item>
+       <widget class="QLineEdit" name="search_text">
+        <property name="placeholderText">
+         <string>Enter species name (e.g., Panthera leo)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="search_button">
+        <property name="text">
+         <string>Find</string>
+        </property>
+        <property name="default">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
-   <item row="1" column="0" colspan="3">
-    <widget class="QLineEdit" name="search_text"/>
-   </item>
-   <item row="1" column="3">
-    <widget class="QPushButton" name="search_button">
-     <property name="text">
-      <string>Find</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Matches found</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Taxonomy</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <widget class="QListWidget" name="results_list"/>
-   </item>
-   <item row="3" column="1" colspan="3">
-    <widget class="QListWidget" name="taxonomy_list"/>
-   </item>
-   <item row="4" column="0">
-    <spacer name="horizontalSpacer">
+   <item>
+    <widget class="QSplitter" name="splitter">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>257</width>
-       <height>20</height>
-      </size>
+     <property name="childrenCollapsible">
+      <bool>false</bool>
      </property>
-    </spacer>
-   </item>
-   <item row="4" column="1" colspan="3">
-    <widget class="QPushButton" name="fetch_button">
-     <property name="text">
-      <string>Fetch occurrences</string>
-     </property>
+     <widget class="QGroupBox" name="results_group">
+      <property name="title">
+       <string>Matching Species</string>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>200</width>
+        <height>0</height>
+       </size>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QListWidget" name="results_list">
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QGroupBox" name="taxonomy_group">
+      <property name="title">
+       <string>Taxonomy</string>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>250</width>
+        <height>0</height>
+       </size>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QListWidget" name="taxonomy_list">
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
-   <item row="5" column="2" colspan="2">
+   <item>
+    <layout class="QHBoxLayout" name="fetch_layout">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="fetch_button">
+       <property name="text">
+        <string>Fetch Occurrences</string>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>150</width>
+         <height>0</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
     <widget class="QDialogButtonBox" name="button_box">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Close</set>
+      <set>QDialogButtonBox::Close|QDialogButtonBox::Help</set>
      </property>
     </widget>
    </item>

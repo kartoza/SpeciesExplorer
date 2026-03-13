@@ -8,14 +8,14 @@
 
 """
 
-__author__ = 'tim@kartoza.com'
-__date__ = '2018-06-22'
-__copyright__ = 'Copyright 2018, Kartoza'
+__author__ = "tim@kartoza.com"
+__date__ = "2018-06-22"
+__copyright__ = "Copyright 2018, Kartoza"
 
 import unittest
+from test.utilities import get_qgis_app
 
 from species_explorer.species_explorer_dialog import SpeciesExplorerDialog
-from test.utilities import get_qgis_app
 
 QGIS_APP = get_qgis_app()
 
@@ -33,15 +33,14 @@ class SpeciesExplorerDialogTest(unittest.TestCase):
 
     def test_dialog_find(self):
         """Test we can click OK."""
-        self.dialog.search_text.setText('Acacia saligna')
+        self.dialog.search_text.setText("Acacia saligna")
         button = self.dialog.search_button
         button.click()
         result = self.dialog.results_list.item(0).text()
-        self.assertEqual(result, 'Acacia saligna')
+        self.assertEqual(result, "Acacia saligna")
 
 
 if __name__ == "__main__":
     suite = unittest.makeSuite(SpeciesExplorerDialogTest)
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite)
-

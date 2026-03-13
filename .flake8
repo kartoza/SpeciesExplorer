@@ -1,0 +1,37 @@
+[flake8]
+max-line-length = 120
+extend-ignore =
+    E501,  # line too long (handled by black)
+    W503,  # line break before binary operator
+    E203,  # whitespace before ':' (conflicts with black)
+    E402,  # module level import not at top
+    D100,  # missing docstring in public module
+    D101,  # missing docstring in public class
+    D102,  # missing docstring in public method
+    D103,  # missing docstring in public function
+    D104,  # missing docstring in public package
+    D105,  # missing docstring in magic method
+    D107,  # missing docstring in __init__
+
+exclude =
+    .git,
+    __pycache__,
+    .venv,
+    venv,
+    build,
+    dist,
+    *.egg-info,
+    resources.py,
+    test_*
+
+per-file-ignores =
+    __init__.py: F401
+    test_*.py: D100,D101,D102,D103
+
+# Docstring settings
+docstring-convention = google
+strictness = short
+
+# Statistics
+count = True
+statistics = True

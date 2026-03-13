@@ -35,85 +35,91 @@ LOCALES =
 #LRELEASE = lrelease-qt4
 
 
+# Plugin directory containing source files
+PLUGINDIR = species_explorer
+
 # translation
 SOURCES = \
-	__init__.py \
-	species_explorer.py species_explorer_dialog.py
+	$(PLUGINDIR)/__init__.py \
+	$(PLUGINDIR)/species_explorer.py $(PLUGINDIR)/species_explorer_dialog.py
 
 PLUGINNAME = species_explorer
 
 PY_FILES = \
-	__init__.py \
-	species_explorer.py species_explorer_dialog.py
+	$(PLUGINDIR)/__init__.py \
+	$(PLUGINDIR)/species_explorer.py \
+	$(PLUGINDIR)/species_explorer_dialog.py \
+	$(PLUGINDIR)/gbifutils.py \
+	$(PLUGINDIR)/gbif_fetcher.py \
+	$(PLUGINDIR)/resources.py
 
-UI_FILES = species_explorer_dialog_base.ui
+UI_FILES = $(PLUGINDIR)/species_explorer_dialog_base.ui
 
-EXTRAS = metadata.txt icon.png
+EXTRAS = $(PLUGINDIR)/metadata.txt $(PLUGINDIR)/icon.png
 
-EXTRA_DIRS =
+EXTRA_DIRS = $(PLUGINDIR)/gui $(PLUGINDIR)/resources
 
-COMPILED_RESOURCE_FILES = resources.py
+COMPILED_RESOURCE_FILES = $(PLUGINDIR)/resources.py
 
-PEP8EXCLUDE=pydev,resources.py,conf.py,third_party,ui
+PEP8EXCLUDE=pydev,resources.py,conf.py,third_party,ui,.venv
 
 
 #################################################
 # Normally you would not need to edit below here
 #################################################
 
-HELP = help/build/html
+HELP = site
 
 PLUGIN_UPLOAD = $(c)/plugin_upload.py
 
-RESOURCE_SRC=$(shell grep '^ *<file' resources.qrc | sed 's@</file>@@g;s/.*>//g' | tr '\n' ' ')
+RESOURCE_SRC=$(shell grep '^ *<file' $(PLUGINDIR)/resources.qrc | sed 's@</file>@@g;s/.*>//g' | tr '\n' ' ')
 
-QGISDIR=.qgis2
+QGISDIR=.local/share/QGIS/QGIS3/profiles/default
 
 default: compile
 
 compile: $(COMPILED_RESOURCE_FILES)
 
-%.py : %.qrc $(RESOURCES_SRC)
-	pyrcc5 -o $*.py  $<
+$(PLUGINDIR)/resources.py: $(PLUGINDIR)/resources.qrc
+	cd $(PLUGINDIR) && pyrcc5 -o resources.py resources.qrc
 
 %.qm : %.ts
 	$(LRELEASE) $<
 
-test: compile transcompile
+test: compile
 	@echo
 	@echo "----------------------"
 	@echo "Regression Test Suite"
 	@echo "----------------------"
-
-	@# Preceding dash means that make will continue in case of errors
+	@# Run pytest with coverage
 	@-export PYTHONPATH=`pwd`:$(PYTHONPATH); \
 		export QGIS_DEBUG=0; \
 		export QGIS_LOG_FILE=/dev/null; \
-		nosetests -v --with-id --with-coverage --cover-package=. \
-		3>&1 1>&2 2>&3 3>&- || true
+		pytest -v test/ --cov=$(PLUGINDIR) --cov-report=term-missing || true
 	@echo "----------------------"
-	@echo "If you get a 'no module named qgis.core error, try sourcing"
-	@echo "the helper script we have provided first then run make test."
-	@echo "e.g. source run-env-linux.sh <path to qgis install>; make test"
+	@echo "If you get a 'no module named qgis.core' error, try running"
+	@echo "within the nix develop environment: nix develop"
 	@echo "----------------------"
 
-deploy: compile doc transcompile
+deploy: compile
 	@echo
 	@echo "------------------------------------------"
-	@echo "Deploying plugin to your .qgis2 directory."
+	@echo "Deploying plugin to your QGIS3 directory."
 	@echo "------------------------------------------"
 	# The deploy  target only works on unix like operating system where
 	# the Python plugin directory is located at:
 	# $HOME/$(QGISDIR)/python/plugins
 	mkdir -p $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
-	cp -vf $(PY_FILES) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
-	cp -vf $(UI_FILES) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
-	cp -vf $(COMPILED_RESOURCE_FILES) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
-	cp -vf $(EXTRAS) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
-	cp -vfr i18n $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
-	cp -vfr $(HELP) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)/help
-	# Copy extra directories if any
-	(foreach EXTRA_DIR,(EXTRA_DIRS), cp -R (EXTRA_DIR) (HOME)/(QGISDIR)/python/plugins/(PLUGINNAME)/;)
+	cp -vf $(PLUGINDIR)/*.py $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)/
+	cp -vf $(PLUGINDIR)/*.ui $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)/
+	# metadata.txt is in root dir
+	cp -vf metadata.txt $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)/
+	cp -vf $(PLUGINDIR)/icon.png $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)/
+	# Copy subdirectories
+	cp -vfr $(PLUGINDIR)/gui $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)/
+	cp -vfr $(PLUGINDIR)/resources $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)/
+	# Copy i18n if exists
+	-cp -vfr $(PLUGINDIR)/i18n $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)/ 2>/dev/null || true
 
 
 # The dclean target removes compiled python files from plugin directory
@@ -170,16 +176,24 @@ transup:
 	@echo "------------------------------------------------"
 	@echo "Updating translation files with any new strings."
 	@echo "------------------------------------------------"
-	@chmod +x scripts/update-strings.sh
-	@scripts/update-strings.sh $(LOCALES)
+	@if [ -n "$(LOCALES)" ]; then \
+		chmod +x scripts/update-strings.sh; \
+		scripts/update-strings.sh $(LOCALES); \
+	else \
+		echo "No locales configured. Skipping."; \
+	fi
 
 transcompile:
 	@echo
 	@echo "----------------------------------------"
 	@echo "Compiled translation files to .qm files."
 	@echo "----------------------------------------"
-	@chmod +x scripts/compile-strings.sh
-	@scripts/compile-strings.sh $(LRELEASE) $(LOCALES)
+	@if [ -n "$(LOCALES)" ]; then \
+		chmod +x scripts/compile-strings.sh; \
+		scripts/compile-strings.sh $(LRELEASE) $(LOCALES); \
+	else \
+		echo "No locales configured. Skipping."; \
+	fi
 
 transclean:
 	@echo
@@ -191,16 +205,23 @@ transclean:
 clean:
 	@echo
 	@echo "------------------------------------"
-	@echo "Removing uic and rcc generated files"
+	@echo "Removing rcc generated files"
 	@echo "------------------------------------"
-	rm $(COMPILED_UI_FILES) $(COMPILED_RESOURCE_FILES)
+	rm -f $(COMPILED_RESOURCE_FILES)
 
 doc:
 	@echo
 	@echo "------------------------------------"
-	@echo "Building documentation using sphinx."
+	@echo "Building documentation using mkdocs."
 	@echo "------------------------------------"
-	cd help; make html
+	mkdocs build
+
+serve-docs:
+	@echo
+	@echo "------------------------------------"
+	@echo "Serving documentation locally."
+	@echo "------------------------------------"
+	mkdocs serve
 
 pylint:
 	@echo

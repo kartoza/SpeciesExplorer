@@ -1,4 +1,17 @@
 .idea
+
+# Nix
+result
+result-*
+.direnv/
+
+# Editor
+.nvim.lua.local
+pyrightconfig.json
+
+# Project
+PROMPT.log
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -103,3 +116,4 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+PROMPT.log

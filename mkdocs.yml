@@ -1,0 +1,128 @@
+---
+# MkDocs configuration for SpeciesExplorer
+# Documentation: https://www.mkdocs.org/
+
+site_name: Species Explorer
+site_description: QGIS plugin for exploring species occurrence data from GBIF
+site_author: Kartoza
+site_url: https://kartoza.github.io/SpeciesExplorer
+
+repo_name: kartoza/SpeciesExplorer
+repo_url: https://github.com/kartoza/SpeciesExplorer
+edit_uri: edit/master/docs/
+
+copyright: |
+  Copyright &copy; 2024 <a href="https://kartoza.com" target="_blank">Kartoza</a>
+  | Made with 💗 by Kartoza
+  | <a href="https://github.com/sponsors/timlinux">Donate</a>
+
+theme:
+  name: material
+  language: en
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: green
+      accent: light green
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: green
+      accent: light green
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Roboto
+    code: Roboto Mono
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.indexes
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - content.action.edit
+  icon:
+    repo: fontawesome/brands/github
+  logo: assets/icon.svg
+  favicon: assets/icon.png
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/kartoza/SpeciesExplorer
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/kartaborneo
+    - icon: fontawesome/solid/globe
+      link: https://kartoza.com
+  generator: false
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink:
+      repo_url_shorthand: true
+      user: kartoza
+      repo: SpeciesExplorer
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+plugins:
+  - search
+
+nav:
+  - Home: index.md
+  - User Guide:
+      - user-guide/index.md
+      - Installation: user-guide/installation.md
+      - Quick Start: user-guide/quickstart.md
+      - Usage: user-guide/usage.md
+      - FAQ: user-guide/faq.md
+  - Developer Guide:
+      - developer/index.md
+      - Setup: developer/setup.md
+      - Architecture: developer/architecture.md
+      - Contributing: developer/contributing.md
+      - API Reference: developer/api.md
+  - About:
+      - License: about/license.md
+      - Credits: about/credits.md
