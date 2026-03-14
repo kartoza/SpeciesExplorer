@@ -14,6 +14,20 @@ from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QPixmap
 from qgis.PyQt.QtWidgets import QHBoxLayout, QLabel, QSizePolicy, QVBoxLayout, QWidget
 
+# PyQt5/PyQt6 compatibility for enum values
+if hasattr(Qt, 'AspectRatioMode'):
+    # PyQt6 style
+    KeepAspectRatio = Qt.AspectRatioMode.KeepAspectRatio
+    SmoothTransformation = Qt.TransformationMode.SmoothTransformation
+    AlignCenter = Qt.AlignmentFlag.AlignCenter
+    RichText = Qt.TextFormat.RichText
+else:
+    # PyQt5 style
+    KeepAspectRatio = Qt.KeepAspectRatio
+    SmoothTransformation = Qt.SmoothTransformation
+    AlignCenter = Qt.AlignCenter
+    RichText = Qt.RichText
+
 # Kartoza brand colors
 KARTOZA_GREEN_DARK = "#589632"
 KARTOZA_GREEN_LIGHT = "#93b023"
@@ -69,9 +83,9 @@ class KartozaFooter(QWidget):
         # Create the footer label with HTML content
         footer_label = QLabel()
         footer_label.setObjectName("kartoza_footer")
-        footer_label.setAlignment(Qt.AlignCenter)
+        footer_label.setAlignment(AlignCenter)
         footer_label.setOpenExternalLinks(True)
-        footer_label.setTextFormat(Qt.RichText)
+        footer_label.setTextFormat(RichText)
 
         footer_html = """
         <div style="text-align: center; font-size: 11px; color: #589632;">
@@ -122,7 +136,7 @@ class KartozaHeader(QWidget):
         icon_path = get_resources_path().parent / "icon.png"
         if icon_path.exists():
             pixmap = QPixmap(str(icon_path))
-            scaled_pixmap = pixmap.scaled(48, 48, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            scaled_pixmap = pixmap.scaled(48, 48, KeepAspectRatio, SmoothTransformation)
             logo_label.setPixmap(scaled_pixmap)
         logo_label.setFixedSize(48, 48)
 
@@ -188,7 +202,7 @@ class StatusLabel(QLabel):
         """
         super().__init__(parent)
         self.setObjectName("status_label")
-        self.setAlignment(Qt.AlignCenter)
+        self.setAlignment(AlignCenter)
         self.clear_status()
 
     def set_status(self, message: str, is_error: bool = False) -> None:

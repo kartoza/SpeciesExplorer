@@ -12,6 +12,7 @@ import json
 from typing import Any, Callable, Dict, List, Optional
 
 from qgis.core import (
+    Qgis,
     QgsApplication,
     QgsCoordinateReferenceSystem,
     QgsFeature,
@@ -24,6 +25,16 @@ from qgis.core import (
     QgsTask,
     QgsVectorLayer,
 )
+
+# PyQt5/PyQt6 compatibility for Qgis.MessageLevel
+if hasattr(Qgis, 'MessageLevel'):
+    MSG_INFO = Qgis.MessageLevel.Info
+    MSG_WARNING = Qgis.MessageLevel.Warning
+    MSG_CRITICAL = Qgis.MessageLevel.Critical
+else:
+    MSG_INFO = Qgis.Info
+    MSG_WARNING = Qgis.Warning
+    MSG_CRITICAL = Qgis.Critical
 from qgis.PyQt.QtCore import QEventLoop, QUrl, QVariant
 from qgis.PyQt.QtNetwork import QNetworkReply, QNetworkRequest
 
@@ -79,7 +90,7 @@ class GBIFFetchTask(QgsTask):
         except Exception as e:
             self.error_message = str(e)
             QgsMessageLog.logMessage(
-                f"GBIF fetch error: {e}", "SpeciesExplorer", level=2
+                f"GBIF fetch error: {e}", "SpeciesExplorer", level=MSG_CRITICAL
             )
             return False
 
@@ -108,7 +119,7 @@ class GBIFFetchTask(QgsTask):
                 f"Warning: {self._total_count} records found, but GBIF API limits to {GBIF_MAX_OFFSET}. "
                 "Consider using GBIF's download service for complete data.",
                 "SpeciesExplorer",
-                level=1,
+                level=MSG_WARNING,
             )
 
         # Process first batch
@@ -150,7 +161,7 @@ class GBIFFetchTask(QgsTask):
             f"scientificName={self.species_name}&limit={GBIF_PAGE_SIZE}&offset={offset}"
         )
 
-        QgsMessageLog.logMessage(f"Fetching: {url}", "SpeciesExplorer", level=0)
+        QgsMessageLog.logMessage(f"Fetching: {url}", "SpeciesExplorer", level=MSG_INFO)
 
         # Use QgsNetworkAccessManager for thread-safe requests
         nam = QgsNetworkAccessManager.instance()
@@ -219,7 +230,7 @@ class GBIFFetchTask(QgsTask):
             f"finished() called: result={result}, records_data_len={len(self._records_data)}, "
             f"record_count={self.record_count}, field_names_len={len(self._field_names)}",
             "SpeciesExplorer",
-            level=0,
+            level=MSG_INFO,
         )
 
         if result and self._records_data:
@@ -228,13 +239,13 @@ class GBIFFetchTask(QgsTask):
             QgsMessageLog.logMessage(
                 f"Task did not succeed: {self.error_message}",
                 "SpeciesExplorer",
-                level=2,
+                level=MSG_CRITICAL,
             )
         elif not self._records_data:
             QgsMessageLog.logMessage(
                 "No records data available despite record_count > 0",
                 "SpeciesExplorer",
-                level=2,
+                level=MSG_CRITICAL,
             )
 
         if self._on_finished:
@@ -245,7 +256,7 @@ class GBIFFetchTask(QgsTask):
         QgsMessageLog.logMessage(
             f"_create_layer called with {len(self._records_data)} records, {len(self._field_names)} fields",
             "SpeciesExplorer",
-            level=0,
+            level=MSG_INFO,
         )
 
         # Sanitize field names (remove special chars, limit length)
@@ -264,7 +275,7 @@ class GBIFFetchTask(QgsTask):
         QgsMessageLog.logMessage(
             f"Creating layer with URI (first 200 chars): {uri[:200]}...",
             "SpeciesExplorer",
-            level=0,
+            level=MSG_INFO,
         )
 
         # Create layer with fields in URI
@@ -274,7 +285,7 @@ class GBIFFetchTask(QgsTask):
             QgsMessageLog.logMessage(
                 "Failed to create valid memory layer!",
                 "SpeciesExplorer",
-                level=2,
+                level=MSG_CRITICAL,
             )
             return
 
@@ -283,14 +294,14 @@ class GBIFFetchTask(QgsTask):
             QgsMessageLog.logMessage(
                 "Failed to get data provider!",
                 "SpeciesExplorer",
-                level=2,
+                level=MSG_CRITICAL,
             )
             return
 
         QgsMessageLog.logMessage(
             f"Layer has {self.layer.fields().count()} fields, provider caps: {provider.capabilities()}",
             "SpeciesExplorer",
-            level=0,
+            level=MSG_INFO,
         )
 
         # Create features with proper field mapping
@@ -318,14 +329,14 @@ class GBIFFetchTask(QgsTask):
                     f"First feature: geom_valid={geom.isGeosValid()}, attrs_count={len(attributes)}, "
                     f"field_count={layer_fields.count()}",
                     "SpeciesExplorer",
-                    level=0,
+                    level=MSG_INFO,
                 )
 
         # Add features using data provider
         QgsMessageLog.logMessage(
             f"Adding {len(features)} features to provider...",
             "SpeciesExplorer",
-            level=0,
+            level=MSG_INFO,
         )
 
         # Start editing, add features, commit
@@ -337,7 +348,7 @@ class GBIFFetchTask(QgsTask):
         QgsMessageLog.logMessage(
             f"commitChanges result: {commit_success}, layer feature count: {self.layer.featureCount()}",
             "SpeciesExplorer",
-            level=0,
+            level=MSG_INFO,
         )
 
         self.layer.updateExtents()
@@ -347,7 +358,7 @@ class GBIFFetchTask(QgsTask):
         QgsMessageLog.logMessage(
             f"Cancelling GBIF fetch for {self.species_name}",
             "SpeciesExplorer",
-            level=0,
+            level=MSG_INFO,
         )
         super().cancel()
 

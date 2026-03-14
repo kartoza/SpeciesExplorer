@@ -11,9 +11,25 @@ handling user interaction for searching species and fetching occurrence data.
 import os
 from typing import Optional
 
-from qgis.core import QgsMessageLog, QgsProject
+from qgis.core import Qgis, QgsMessageLog, QgsProject
+
+# PyQt5/PyQt6 compatibility for Qgis.MessageLevel
+if hasattr(Qgis, 'MessageLevel'):
+    MSG_INFO = Qgis.MessageLevel.Info
+    MSG_WARNING = Qgis.MessageLevel.Warning
+    MSG_CRITICAL = Qgis.MessageLevel.Critical
+else:
+    MSG_INFO = Qgis.Info
+    MSG_WARNING = Qgis.Warning
+    MSG_CRITICAL = Qgis.Critical
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import Qt
+
+# PyQt5/PyQt6 compatibility for Qt.UserRole
+if hasattr(Qt, 'ItemDataRole'):
+    UserRole = Qt.ItemDataRole.UserRole
+else:
+    UserRole = Qt.UserRole
 
 from .gbif_fetcher import GBIFFetchTask, fetch_species_async
 from .gbifutils import gbif_GET, name_parser, name_usage
@@ -136,7 +152,7 @@ class SpeciesExplorerDialog(QtWidgets.QDialog, FORM_CLASS):
             genus = text
             species = ""
 
-        QgsMessageLog.logMessage(f"Searching for {text}", "SpeciesExplorer", 0)
+        QgsMessageLog.logMessage(f"Searching for {text}", "SpeciesExplorer", MSG_INFO)
 
         url = (
             "https://api.gbif.org/v1/species/search?"
@@ -165,7 +181,7 @@ class SpeciesExplorerDialog(QtWidgets.QDialog, FORM_CLASS):
                 continue
 
             species_item = QtWidgets.QListWidgetItem(name)
-            species_item.setData(Qt.UserRole, taxon_key)
+            species_item.setData(UserRole, taxon_key)
             self.results_list.addItem(species_item)
             names[name] = taxon_key
 
@@ -184,10 +200,10 @@ class SpeciesExplorerDialog(QtWidgets.QDialog, FORM_CLASS):
         species_name = item.text()
         self._set_status(f"Loading taxonomy for {species_name}...")
 
-        QgsMessageLog.logMessage(f"{species_name} selected", "SpeciesExplorer", 0)
+        QgsMessageLog.logMessage(f"{species_name} selected", "SpeciesExplorer", MSG_INFO)
 
         try:
-            species = name_usage(item.data(Qt.UserRole))
+            species = name_usage(item.data(UserRole))
         except Exception as e:
             self._set_status(f"Failed to load taxonomy: {e}", is_error=True)
             return
@@ -213,7 +229,7 @@ class SpeciesExplorerDialog(QtWidgets.QDialog, FORM_CLASS):
         if "accepted" in species:
             self.taxonomy_list.addItem(f"Accepted Name: {species['accepted']}")
 
-        self.taxonomy_list.addItem(f"Accepted Key: {item.data(Qt.UserRole)}")
+        self.taxonomy_list.addItem(f"Accepted Key: {item.data(UserRole)}")
         self._set_status(f"Selected: {species_name}")
 
     def fetch(self) -> None:
@@ -235,7 +251,7 @@ class SpeciesExplorerDialog(QtWidgets.QDialog, FORM_CLASS):
         self._set_fetching_state(True)
 
         QgsMessageLog.logMessage(
-            f"Starting async fetch for {name}", "SpeciesExplorer", 0
+            f"Starting async fetch for {name}", "SpeciesExplorer", MSG_INFO
         )
 
         # Start async fetch
@@ -265,7 +281,7 @@ class SpeciesExplorerDialog(QtWidgets.QDialog, FORM_CLASS):
             QgsMessageLog.logMessage(
                 f"Successfully fetched {task.record_count} records",
                 "SpeciesExplorer",
-                0,
+                MSG_INFO,
             )
         else:
             self._set_status(
@@ -275,7 +291,7 @@ class SpeciesExplorerDialog(QtWidgets.QDialog, FORM_CLASS):
             QgsMessageLog.logMessage(
                 f"Fetch failed: {task.error_message}",
                 "SpeciesExplorer",
-                2,
+                MSG_CRITICAL,
             )
 
     def cancel_fetch(self) -> None:

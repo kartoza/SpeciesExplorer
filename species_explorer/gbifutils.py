@@ -16,7 +16,17 @@ import os
 from tempfile import mkstemp
 from typing import Any, Dict, List, Optional, Union
 
-from qgis.core import QgsFileDownloader, QgsMessageLog, QgsNetworkAccessManager
+from qgis.core import Qgis, QgsFileDownloader, QgsMessageLog, QgsNetworkAccessManager
+
+# PyQt5/PyQt6 compatibility for Qgis.MessageLevel
+if hasattr(Qgis, 'MessageLevel'):
+    MSG_INFO = Qgis.MessageLevel.Info
+    MSG_WARNING = Qgis.MessageLevel.Warning
+    MSG_CRITICAL = Qgis.MessageLevel.Critical
+else:
+    MSG_INFO = Qgis.Info
+    MSG_WARNING = Qgis.Warning
+    MSG_CRITICAL = Qgis.Critical
 from qgis.PyQt.QtCore import QEventLoop, QUrl
 
 __version__ = "0.3.0"
@@ -60,7 +70,7 @@ def gbif_GET(url: str, args: Optional[Dict] = None, **kwargs) -> Dict[str, Any]:
     handle, output_path = mkstemp(suffix=".json")
     os.close(handle)  # Close the file handle immediately
 
-    QgsMessageLog.logMessage(f"gbif_GET URL: {url}", "SpeciesExplorer", 0)
+    QgsMessageLog.logMessage(f"gbif_GET URL: {url}", "SpeciesExplorer", MSG_INFO)
 
     # Use QEventLoop to make the async download synchronous
     loop = QEventLoop()

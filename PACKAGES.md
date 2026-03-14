@@ -299,10 +299,10 @@ nix run .#docs-build
 
 ### Runtime Dependencies
 
-| Package | Purpose |
-|---------|---------|
-| QGIS | Core GIS functionality |
-| PyQt5 | Qt bindings for Python |
+| Package  | Purpose |
+|----------|---------|
+| QGIS     | Core GIS functionality |
+| PyQt     | Qt bindings for Python |
 | requests | HTTP library (legacy) |
 
 ### Development Dependencies
