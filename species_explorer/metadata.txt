@@ -7,7 +7,7 @@ name=Species Explorer
 qgisMinimumVersion=3.0
 qgisMaximumVersion=4.99
 description=Quickly fetch and visualize species occurrence data from GBIF.
-version=0.3.1
+version=0.3.2
 author=Kartoza
 email=tim@kartoza.com
 license=GPLv3
@@ -19,6 +19,7 @@ repository=https://github.com/kartoza/SpeciesExplorer
 
 # Changelog
 changelog=
+    0.3.2 - Use generic qgis.PyQt imports for QGIS 3 and 4 compatibility
     0.3.1 - Enhanced documentation with admin guide, architecture diagrams, API reference, and deployed to GitHub Pages
     0.3.0 - Reorganized plugin structure, fixed async GBIF fetcher, added REUSE compliance
     0.2.0 - Modernized tooling (Nix flake, GitHub Actions, mkdocs, pre-commit)

@@ -712,7 +712,7 @@ from qgis.core import (
     QgsVectorLayer, QgsFeature, QgsGeometry,
     QgsPointXY, QgsField, QgsFields
 )
-from PyQt5.QtCore import QVariant
+from qgis.PyQt.QtCore import QVariant
 
 # Create memory layer
 layer = QgsVectorLayer(
