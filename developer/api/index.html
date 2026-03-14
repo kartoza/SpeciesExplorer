@@ -1,0 +1,3671 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="QGIS plugin for exploring species occurrence data from GBIF">
+      
+      
+        <meta name="author" content="Kartoza">
+      
+      
+        <link rel="canonical" href="https://kartoza.github.io/SpeciesExplorer/developer/api/">
+      
+      
+        <link rel="prev" href="../contributing/">
+      
+      
+        <link rel="next" href="../../about/license/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/icon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>API Reference - Species Explorer</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="green" data-md-color-accent="light-green">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#api-reference" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Species Explorer" class="md-header__button md-logo" aria-label="Species Explorer" data-md-component="logo">
+      
+  <img src="../../assets/icon.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Species Explorer
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              API Reference
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="green" data-md-color-accent="light-green"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="green" data-md-color-accent="light-green"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/kartoza/SpeciesExplorer" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    kartoza/SpeciesExplorer
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../user-guide/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  User Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../admin/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Administrator Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Developer Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../about/license/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  About
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Species Explorer" class="md-nav__button md-logo" aria-label="Species Explorer" data-md-component="logo">
+      
+  <img src="../../assets/icon.svg" alt="logo">
+
+    </a>
+    Species Explorer
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/kartoza/SpeciesExplorer" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    kartoza/SpeciesExplorer
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../user-guide/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Guide
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../admin/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Administrator Guide
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Administrator Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developer Guide
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Developer Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#module-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Module Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#module-species_explorer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Module: species_explorer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Module: species_explorer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#class-speciesexplorer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Class: SpeciesExplorer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Class: SpeciesExplorer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#constructor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constructor
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Constructor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init__iface-qgisinterface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__(iface: QgisInterface)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#initgui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        initGui()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        run()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        unload()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add_actionicon_path-text-callback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_action(icon_path, text, callback, ...)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trmessage-str-str" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tr(message: str) -&gt; str
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#module-species_explorer_dialog" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Module: species_explorer_dialog
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Module: species_explorer_dialog">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#class-speciesexplorerdialog" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Class: SpeciesExplorerDialog
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Class: SpeciesExplorerDialog">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#constructor_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constructor
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Constructor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init__parent-qwidget-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__(parent: QWidget = None)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#find" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        find()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#selectitem-qlistwidgetitem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select(item: QListWidgetItem)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fetch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fetch()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_on_fetch_finishedtask-gbiffetchtask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        _on_fetch_finished(task: GBIFFetchTask)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_set_statusmessage-str-is_error-bool-false" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        _set_status(message: str, is_error: bool = False)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_set_fetching_stateis_fetching-bool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        _set_fetching_state(is_fetching: bool)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#closeeventevent-qcloseevent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        closeEvent(event: QCloseEvent)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#module-gbif_fetcher" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Module: gbif_fetcher
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Module: gbif_fetcher">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#class-gbiffetchtask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Class: GBIFFetchTask
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Class: GBIFFetchTask">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#constructor_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constructor
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Constructor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init__species_name-str" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__(species_name: str)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#constants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constants
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#run-bool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        run() -&gt; bool
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_fetch_occurrences" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        _fetch_occurrences()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_make_requestoffset-int-dict" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        _make_request(offset: int) -&gt; dict
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_process_recordsresponse-dict" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        _process_records(response: dict)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_create_layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        _create_layer()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#finishedresult-bool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        finished(result: bool)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-fetch_species_async" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Function: fetch_species_async
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#module-gbifutils" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Module: gbifutils
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Module: gbifutils">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Functions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#name_parsername-str-dict" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        name_parser(name: str) -&gt; dict
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#name_usagekey-int-dict" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        name_usage(key: int, ...) -&gt; dict
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gbif_geturl-str-args-dict-none-dict" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gbif_GET(url: str, args: dict = None) -&gt; dict
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exceptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exceptions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Exceptions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#noresultexception" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NoResultException
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gbifnetworkerror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GBIFNetworkError
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#module-guikartoza_branding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Module: gui.kartoza_branding
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Module: gui.kartoza_branding">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#constants_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constants
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-kartozaheader" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Class: KartozaHeader
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-kartozafooter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Class: KartozaFooter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-statuslabel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Class: StatusLabel
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Class: StatusLabel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set_statusmessage-str-is_error-bool-false" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_status(message: str, is_error: bool = False)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#functions_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Functions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#apply_kartoza_stylingwidget-qwidget" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        apply_kartoza_styling(widget: QWidget)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#load_stylesheet-str" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        load_stylesheet() -&gt; str
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_resources_path-str" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_resources_path() -&gt; str
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#constants_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constants
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Constants">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gbif-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GBIF API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coordinate-reference-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coordinate Reference System
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pagination" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pagination
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#events-and-callbacks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Events and Callbacks
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Events and Callbacks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#task-completion-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task Completion Pattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-species-search" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Species Search
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fetch-occurrences-async" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fetch Occurrences Async
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-layer-manually" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create Layer Manually
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    About
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/license/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    License
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/credits/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Credits
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#module-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Module Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#module-species_explorer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Module: species_explorer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Module: species_explorer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#class-speciesexplorer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Class: SpeciesExplorer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Class: SpeciesExplorer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#constructor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constructor
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Constructor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init__iface-qgisinterface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__(iface: QgisInterface)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#initgui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        initGui()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        run()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        unload()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add_actionicon_path-text-callback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_action(icon_path, text, callback, ...)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trmessage-str-str" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tr(message: str) -&gt; str
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#module-species_explorer_dialog" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Module: species_explorer_dialog
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Module: species_explorer_dialog">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#class-speciesexplorerdialog" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Class: SpeciesExplorerDialog
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Class: SpeciesExplorerDialog">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#constructor_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constructor
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Constructor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init__parent-qwidget-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__(parent: QWidget = None)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#find" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        find()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#selectitem-qlistwidgetitem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select(item: QListWidgetItem)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fetch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fetch()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_on_fetch_finishedtask-gbiffetchtask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        _on_fetch_finished(task: GBIFFetchTask)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_set_statusmessage-str-is_error-bool-false" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        _set_status(message: str, is_error: bool = False)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_set_fetching_stateis_fetching-bool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        _set_fetching_state(is_fetching: bool)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#closeeventevent-qcloseevent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        closeEvent(event: QCloseEvent)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#module-gbif_fetcher" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Module: gbif_fetcher
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Module: gbif_fetcher">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#class-gbiffetchtask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Class: GBIFFetchTask
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Class: GBIFFetchTask">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#constructor_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constructor
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Constructor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init__species_name-str" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__(species_name: str)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#constants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constants
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#run-bool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        run() -&gt; bool
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_fetch_occurrences" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        _fetch_occurrences()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_make_requestoffset-int-dict" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        _make_request(offset: int) -&gt; dict
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_process_recordsresponse-dict" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        _process_records(response: dict)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_create_layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        _create_layer()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#finishedresult-bool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        finished(result: bool)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-fetch_species_async" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Function: fetch_species_async
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#module-gbifutils" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Module: gbifutils
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Module: gbifutils">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Functions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#name_parsername-str-dict" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        name_parser(name: str) -&gt; dict
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#name_usagekey-int-dict" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        name_usage(key: int, ...) -&gt; dict
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gbif_geturl-str-args-dict-none-dict" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gbif_GET(url: str, args: dict = None) -&gt; dict
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exceptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exceptions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Exceptions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#noresultexception" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NoResultException
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gbifnetworkerror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GBIFNetworkError
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#module-guikartoza_branding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Module: gui.kartoza_branding
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Module: gui.kartoza_branding">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#constants_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constants
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-kartozaheader" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Class: KartozaHeader
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-kartozafooter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Class: KartozaFooter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-statuslabel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Class: StatusLabel
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Class: StatusLabel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set_statusmessage-str-is_error-bool-false" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_status(message: str, is_error: bool = False)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#functions_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Functions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#apply_kartoza_stylingwidget-qwidget" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        apply_kartoza_styling(widget: QWidget)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#load_stylesheet-str" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        load_stylesheet() -&gt; str
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_resources_path-str" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_resources_path() -&gt; str
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#constants_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constants
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Constants">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gbif-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GBIF API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coordinate-reference-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coordinate Reference System
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pagination" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pagination
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#events-and-callbacks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Events and Callbacks
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Events and Callbacks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#task-completion-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task Completion Pattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-species-search" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Species Search
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fetch-occurrences-async" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fetch Occurrences Async
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-layer-manually" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create Layer Manually
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/kartoza/SpeciesExplorer/edit/master/docs/developer/api.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h1>
+<p>Technical documentation for Species Explorer modules and classes.</p>
+<h2 id="module-overview">Module Overview<a class="headerlink" href="#module-overview" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>graph LR
+    A[species_explorer] --&gt; B[species_explorer_dialog]
+    B --&gt; C[gbifutils]
+    B --&gt; D[gbif_fetcher]
+    B --&gt; E[gui.kartoza_branding]
+    D --&gt; C</code></pre>
+<hr />
+<h2 id="module-species_explorer">Module: species_explorer<a class="headerlink" href="#module-species_explorer" title="Permanent link">&para;</a></h2>
+<h3 id="class-speciesexplorer">Class: SpeciesExplorer<a class="headerlink" href="#class-speciesexplorer" title="Permanent link">&para;</a></h3>
+<p>Main plugin class that handles QGIS integration.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">SpeciesExplorer</span><span class="p">:</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;QGIS Plugin for exploring species occurrence data from GBIF.&quot;&quot;&quot;</span>
+</code></pre></div>
+<h4 id="constructor">Constructor<a class="headerlink" href="#constructor" title="Permanent link">&para;</a></h4>
+<h5 id="__init__iface-qgisinterface"><code>__init__(iface: QgisInterface)</code><a class="headerlink" href="#__init__iface-qgisinterface" title="Permanent link">&para;</a></h5>
+<p>Initialize the plugin.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>iface</code></td>
+<td><code>QgisInterface</code></td>
+<td>QGIS interface object</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Attributes Set:</strong></p>
+<ul>
+<li><code>self.iface</code> - QGIS interface reference</li>
+<li><code>self.actions</code> - List of plugin actions</li>
+<li><code>self.menu</code> - Menu name string</li>
+<li><code>self.toolbar</code> - QToolBar instance</li>
+<li><code>self.pluginIsActive</code> - Boolean state flag</li>
+<li><code>self.dlg</code> - Dialog instance (created on first run)</li>
+</ul>
+<h4 id="methods">Methods<a class="headerlink" href="#methods" title="Permanent link">&para;</a></h4>
+<h5 id="initgui"><code>initGui()</code><a class="headerlink" href="#initgui" title="Permanent link">&para;</a></h5>
+<p>Initialize the plugin GUI elements. Creates toolbar action and menu entry.</p>
+<p><strong>Effects:</strong></p>
+<ul>
+<li>Creates toolbar with plugin icon</li>
+<li>Adds menu entry under Plugins</li>
+</ul>
+<h5 id="run"><code>run()</code><a class="headerlink" href="#run" title="Permanent link">&para;</a></h5>
+<p>Show the Species Explorer dialog.</p>
+<p><strong>Behavior:</strong></p>
+<ul>
+<li>Creates dialog on first call</li>
+<li>Shows dialog as non-modal window</li>
+</ul>
+<h5 id="unload"><code>unload()</code><a class="headerlink" href="#unload" title="Permanent link">&para;</a></h5>
+<p>Clean up plugin resources when unloading.</p>
+<p><strong>Effects:</strong></p>
+<ul>
+<li>Removes toolbar actions</li>
+<li>Removes menu entries</li>
+<li>Deletes toolbar</li>
+</ul>
+<h5 id="add_actionicon_path-text-callback"><code>add_action(icon_path, text, callback, ...)</code><a class="headerlink" href="#add_actionicon_path-text-callback" title="Permanent link">&para;</a></h5>
+<p>Helper method to add toolbar/menu actions.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>icon_path</code></td>
+<td><code>str</code></td>
+<td>Required</td>
+<td>Path to icon file</td>
+</tr>
+<tr>
+<td><code>text</code></td>
+<td><code>str</code></td>
+<td>Required</td>
+<td>Action text</td>
+</tr>
+<tr>
+<td><code>callback</code></td>
+<td><code>callable</code></td>
+<td>Required</td>
+<td>Function to call</td>
+</tr>
+<tr>
+<td><code>enabled_flag</code></td>
+<td><code>bool</code></td>
+<td><code>True</code></td>
+<td>Initial enabled state</td>
+</tr>
+<tr>
+<td><code>add_to_menu</code></td>
+<td><code>bool</code></td>
+<td><code>True</code></td>
+<td>Add to menu</td>
+</tr>
+<tr>
+<td><code>add_to_toolbar</code></td>
+<td><code>bool</code></td>
+<td><code>True</code></td>
+<td>Add to toolbar</td>
+</tr>
+<tr>
+<td><code>status_tip</code></td>
+<td><code>str</code></td>
+<td><code>None</code></td>
+<td>Status bar tip</td>
+</tr>
+<tr>
+<td><code>whats_this</code></td>
+<td><code>str</code></td>
+<td><code>None</code></td>
+<td>What's This help</td>
+</tr>
+<tr>
+<td><code>parent</code></td>
+<td><code>QWidget</code></td>
+<td><code>None</code></td>
+<td>Parent widget</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<p><code>QAction</code> - The created action</p>
+<h5 id="trmessage-str-str"><code>tr(message: str) -&gt; str</code><a class="headerlink" href="#trmessage-str-str" title="Permanent link">&para;</a></h5>
+<p>Translation helper for internationalization.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>message</code> - String to translate</li>
+</ul>
+<p><strong>Returns:</strong></p>
+<p>Translated string</p>
+<hr />
+<h2 id="module-species_explorer_dialog">Module: species_explorer_dialog<a class="headerlink" href="#module-species_explorer_dialog" title="Permanent link">&para;</a></h2>
+<h3 id="class-speciesexplorerdialog">Class: SpeciesExplorerDialog<a class="headerlink" href="#class-speciesexplorerdialog" title="Permanent link">&para;</a></h3>
+<p>Main dialog class with UI logic.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">SpeciesExplorerDialog</span><span class="p">(</span><span class="n">QDialog</span><span class="p">):</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Dialog for Species Explorer plugin.&quot;&quot;&quot;</span>
+</code></pre></div>
+<h4 id="constructor_1">Constructor<a class="headerlink" href="#constructor_1" title="Permanent link">&para;</a></h4>
+<h5 id="__init__parent-qwidget-none"><code>__init__(parent: QWidget = None)</code><a class="headerlink" href="#__init__parent-qwidget-none" title="Permanent link">&para;</a></h5>
+<p>Initialize the dialog.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>parent</code></td>
+<td><code>QWidget</code></td>
+<td><code>None</code></td>
+<td>Parent widget</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Initialization:</strong></p>
+<ul>
+<li>Loads UI from <code>.ui</code> file</li>
+<li>Sets up signal/slot connections</li>
+<li>Initializes Kartoza branding components</li>
+<li>Creates status label</li>
+</ul>
+<h4 id="properties">Properties<a class="headerlink" href="#properties" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>search_text</code></td>
+<td><code>QLineEdit</code></td>
+<td>Species name input</td>
+</tr>
+<tr>
+<td><code>search_button</code></td>
+<td><code>QPushButton</code></td>
+<td>Find button</td>
+</tr>
+<tr>
+<td><code>results_list</code></td>
+<td><code>QListWidget</code></td>
+<td>Search results</td>
+</tr>
+<tr>
+<td><code>taxonomy_list</code></td>
+<td><code>QListWidget</code></td>
+<td>Taxonomy display</td>
+</tr>
+<tr>
+<td><code>fetch_button</code></td>
+<td><code>QPushButton</code></td>
+<td>Fetch button</td>
+</tr>
+<tr>
+<td><code>status_label</code></td>
+<td><code>StatusLabel</code></td>
+<td>Status display</td>
+</tr>
+</tbody>
+</table>
+<h4 id="methods_1">Methods<a class="headerlink" href="#methods_1" title="Permanent link">&para;</a></h4>
+<h5 id="find"><code>find()</code><a class="headerlink" href="#find" title="Permanent link">&para;</a></h5>
+<p>Search GBIF for species matching the search text.</p>
+<p><strong>Behavior:</strong></p>
+<ol>
+<li>Gets search text from input field</li>
+<li>Calls <code>name_parser()</code> to parse scientific name</li>
+<li>Queries GBIF <code>/species/search</code> endpoint</li>
+<li>Filters results to ACCEPTED species only</li>
+<li>Populates results list with unique canonical names</li>
+</ol>
+<p><strong>Side Effects:</strong></p>
+<ul>
+<li>Updates <code>results_list</code> widget</li>
+<li>Updates status label</li>
+<li>Stores species keys in item data</li>
+</ul>
+<h5 id="selectitem-qlistwidgetitem"><code>select(item: QListWidgetItem)</code><a class="headerlink" href="#selectitem-qlistwidgetitem" title="Permanent link">&para;</a></h5>
+<p>Handle species selection from results list.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>item</code> - Selected list item</li>
+</ul>
+<p><strong>Behavior:</strong></p>
+<ol>
+<li>Gets GBIF taxon key from item data</li>
+<li>Queries GBIF <code>/species/{key}</code> endpoint</li>
+<li>Extracts taxonomic hierarchy</li>
+<li>Displays in taxonomy list</li>
+</ol>
+<p><strong>Displayed Fields:</strong></p>
+<ul>
+<li>Kingdom, Phylum, Class, Order, Family, Genus, Species</li>
+<li>Taxon ID, Canonical Name, Accepted Name</li>
+</ul>
+<h5 id="fetch"><code>fetch()</code><a class="headerlink" href="#fetch" title="Permanent link">&para;</a></h5>
+<p>Start async background task to fetch occurrence data.</p>
+<p><strong>Behavior:</strong></p>
+<ol>
+<li>Gets species name from selected item</li>
+<li>Creates <code>GBIFFetchTask</code> instance</li>
+<li>Connects completion callback</li>
+<li>Adds task to QGIS task manager</li>
+<li>Updates UI to fetching state</li>
+</ol>
+<p><strong>Side Effects:</strong></p>
+<ul>
+<li>Disables fetch button during operation</li>
+<li>Updates status with progress</li>
+<li>Adds layer to project on success</li>
+</ul>
+<h5 id="_on_fetch_finishedtask-gbiffetchtask"><code>_on_fetch_finished(task: GBIFFetchTask)</code><a class="headerlink" href="#_on_fetch_finishedtask-gbiffetchtask" title="Permanent link">&para;</a></h5>
+<p>Handle completion of async fetch task.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>task</code> - Completed fetch task</li>
+</ul>
+<p><strong>Behavior:</strong></p>
+<ul>
+<li>If successful: adds layer to project, shows success status</li>
+<li>If failed: shows error message in red</li>
+</ul>
+<h5 id="_set_statusmessage-str-is_error-bool-false"><code>_set_status(message: str, is_error: bool = False)</code><a class="headerlink" href="#_set_statusmessage-str-is_error-bool-false" title="Permanent link">&para;</a></h5>
+<p>Update status message display.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>message</code></td>
+<td><code>str</code></td>
+<td>Required</td>
+<td>Status message</td>
+</tr>
+<tr>
+<td><code>is_error</code></td>
+<td><code>bool</code></td>
+<td><code>False</code></td>
+<td>Show as error (red)</td>
+</tr>
+</tbody>
+</table>
+<h5 id="_set_fetching_stateis_fetching-bool"><code>_set_fetching_state(is_fetching: bool)</code><a class="headerlink" href="#_set_fetching_stateis_fetching-bool" title="Permanent link">&para;</a></h5>
+<p>Enable/disable UI controls during fetch.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>is_fetching</code> - True to disable controls</li>
+</ul>
+<p><strong>Effects:</strong></p>
+<ul>
+<li>Disables/enables fetch button</li>
+<li>Disables/enables search controls</li>
+<li>Updates cursor</li>
+</ul>
+<h5 id="closeeventevent-qcloseevent"><code>closeEvent(event: QCloseEvent)</code><a class="headerlink" href="#closeeventevent-qcloseevent" title="Permanent link">&para;</a></h5>
+<p>Handle dialog close, cancelling any running tasks.</p>
+<p><strong>Behavior:</strong></p>
+<ul>
+<li>Cancels active fetch task if running</li>
+<li>Accepts close event</li>
+</ul>
+<hr />
+<h2 id="module-gbif_fetcher">Module: gbif_fetcher<a class="headerlink" href="#module-gbif_fetcher" title="Permanent link">&para;</a></h2>
+<h3 id="class-gbiffetchtask">Class: GBIFFetchTask<a class="headerlink" href="#class-gbiffetchtask" title="Permanent link">&para;</a></h3>
+<p>Async background task for fetching GBIF occurrence data.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">GBIFFetchTask</span><span class="p">(</span><span class="n">QgsTask</span><span class="p">):</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Non-blocking task for fetching species occurrences from GBIF.&quot;&quot;&quot;</span>
+</code></pre></div>
+<h4 id="constructor_2">Constructor<a class="headerlink" href="#constructor_2" title="Permanent link">&para;</a></h4>
+<h5 id="__init__species_name-str"><code>__init__(species_name: str)</code><a class="headerlink" href="#__init__species_name-str" title="Permanent link">&para;</a></h5>
+<p>Create a new fetch task.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>species_name</code></td>
+<td><code>str</code></td>
+<td>Scientific name to search</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Attributes:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>species_name</code></td>
+<td><code>str</code></td>
+<td>Search query</td>
+</tr>
+<tr>
+<td><code>layer</code></td>
+<td><code>QgsVectorLayer</code></td>
+<td>Result layer (set on success)</td>
+</tr>
+<tr>
+<td><code>error_message</code></td>
+<td><code>str</code></td>
+<td>Error message (set on failure)</td>
+</tr>
+<tr>
+<td><code>records</code></td>
+<td><code>list</code></td>
+<td>Fetched occurrence records</td>
+</tr>
+</tbody>
+</table>
+<h4 id="constants">Constants<a class="headerlink" href="#constants" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">GBIF_PAGE_SIZE</span> <span class="o">=</span> <span class="mi">300</span>      <span class="c1"># Records per API request</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">GBIF_MAX_OFFSET</span> <span class="o">=</span> <span class="mi">100000</span>  <span class="c1"># GBIF&#39;s hard limit</span>
+</code></pre></div>
+<h4 id="methods_2">Methods<a class="headerlink" href="#methods_2" title="Permanent link">&para;</a></h4>
+<h5 id="run-bool"><code>run() -&gt; bool</code><a class="headerlink" href="#run-bool" title="Permanent link">&para;</a></h5>
+<p>Main task execution (runs in background thread).</p>
+<p><strong>Returns:</strong></p>
+<p><code>True</code> on success, <code>False</code> on failure</p>
+<p><strong>Behavior:</strong></p>
+<ol>
+<li>Fetches occurrences with pagination</li>
+<li>Processes records</li>
+<li>Creates vector layer</li>
+<li>Returns success status</li>
+</ol>
+<h5 id="_fetch_occurrences"><code>_fetch_occurrences()</code><a class="headerlink" href="#_fetch_occurrences" title="Permanent link">&para;</a></h5>
+<p>Orchestrate paginated record fetching.</p>
+<p><strong>Behavior:</strong></p>
+<ul>
+<li>Makes requests until all records fetched or limit reached</li>
+<li>Reports progress during fetch</li>
+<li>Handles pagination automatically</li>
+</ul>
+<h5 id="_make_requestoffset-int-dict"><code>_make_request(offset: int) -&gt; dict</code><a class="headerlink" href="#_make_requestoffset-int-dict" title="Permanent link">&para;</a></h5>
+<p>Make single HTTP request to GBIF.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>offset</code> - Pagination offset</li>
+</ul>
+<p><strong>Returns:</strong></p>
+<p>JSON response as dictionary</p>
+<p><strong>Raises:</strong></p>
+<ul>
+<li><code>GBIFNetworkError</code> on connection failure</li>
+</ul>
+<h5 id="_process_recordsresponse-dict"><code>_process_records(response: dict)</code><a class="headerlink" href="#_process_recordsresponse-dict" title="Permanent link">&para;</a></h5>
+<p>Process occurrence records from API response.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>response</code> - GBIF API response</li>
+</ul>
+<p><strong>Behavior:</strong></p>
+<ul>
+<li>Filters records with valid coordinates</li>
+<li>Sanitizes field names</li>
+<li>Stores in <code>self.records</code></li>
+</ul>
+<h5 id="_create_layer"><code>_create_layer()</code><a class="headerlink" href="#_create_layer" title="Permanent link">&para;</a></h5>
+<p>Create QgsVectorLayer from fetched records.</p>
+<p><strong>Behavior:</strong></p>
+<ol>
+<li>Determines field schema from records</li>
+<li>Creates memory layer</li>
+<li>Adds features with geometries</li>
+<li>Sets layer name to species name</li>
+</ol>
+<p><strong>Result:</strong></p>
+<p>Sets <code>self.layer</code> to created layer</p>
+<h5 id="finishedresult-bool"><code>finished(result: bool)</code><a class="headerlink" href="#finishedresult-bool" title="Permanent link">&para;</a></h5>
+<p>Called when task completes (in main thread).</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>result</code> - Success status from <code>run()</code></li>
+</ul>
+<p><strong>Note:</strong></p>
+<p>This is where callbacks should be connected to handle results.</p>
+<h3 id="function-fetch_species_async">Function: fetch_species_async<a class="headerlink" href="#function-fetch_species_async" title="Permanent link">&para;</a></h3>
+<p>Convenience function for async fetching.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">fetch_species_async</span><span class="p">(</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="n">species_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="n">on_finished</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">GBIFFetchTask</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GBIFFetchTask</span>
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>species_name</code></td>
+<td><code>str</code></td>
+<td>Species to search</td>
+</tr>
+<tr>
+<td><code>on_finished</code></td>
+<td><code>callable</code></td>
+<td>Callback function</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<p><code>GBIFFetchTask</code> - The created task (already started)</p>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">handle_result</span><span class="p">(</span><span class="n">task</span><span class="p">):</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="k">if</span> <span class="n">task</span><span class="o">.</span><span class="n">layer</span><span class="p">:</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>        <span class="n">QgsProject</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">addMapLayer</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">layer</span><span class="p">)</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">task</span><span class="o">.</span><span class="n">error_message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="n">fetch_species_async</span><span class="p">(</span><span class="s2">&quot;Panthera leo&quot;</span><span class="p">,</span> <span class="n">handle_result</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="module-gbifutils">Module: gbifutils<a class="headerlink" href="#module-gbifutils" title="Permanent link">&para;</a></h2>
+<p>Utilities for interacting with the GBIF API.</p>
+<h3 id="functions">Functions<a class="headerlink" href="#functions" title="Permanent link">&para;</a></h3>
+<h5 id="name_parsername-str-dict"><code>name_parser(name: str) -&gt; dict</code><a class="headerlink" href="#name_parsername-str-dict" title="Permanent link">&para;</a></h5>
+<p>Parse a scientific name using GBIF name parser.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>name</code> - Scientific name to parse</li>
+</ul>
+<p><strong>Returns:</strong></p>
+<p>Dictionary with parsed name components:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="p">{</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    <span class="s1">&#39;scientificName&#39;</span><span class="p">:</span> <span class="s1">&#39;Panthera leo&#39;</span><span class="p">,</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    <span class="s1">&#39;canonicalName&#39;</span><span class="p">:</span> <span class="s1">&#39;Panthera leo&#39;</span><span class="p">,</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    <span class="s1">&#39;canonicalNameComplete&#39;</span><span class="p">:</span> <span class="s1">&#39;Panthera leo&#39;</span><span class="p">,</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    <span class="s1">&#39;genus&#39;</span><span class="p">:</span> <span class="s1">&#39;Panthera&#39;</span><span class="p">,</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>    <span class="s1">&#39;specificEpithet&#39;</span><span class="p">:</span> <span class="s1">&#39;leo&#39;</span><span class="p">,</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>    <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;SCIENTIFIC&#39;</span><span class="p">,</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    <span class="s1">&#39;parsed&#39;</span><span class="p">:</span> <span class="kc">True</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="p">}</span>
+</code></pre></div>
+<p><strong>Raises:</strong></p>
+<ul>
+<li><code>NoResultException</code> if parsing fails</li>
+</ul>
+<h5 id="name_usagekey-int-dict"><code>name_usage(key: int, ...) -&gt; dict</code><a class="headerlink" href="#name_usagekey-int-dict" title="Permanent link">&para;</a></h5>
+<p>Get species information by GBIF taxon key.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>key</code></td>
+<td><code>int</code></td>
+<td><code>None</code></td>
+<td>GBIF taxon key</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td><code>str</code></td>
+<td><code>None</code></td>
+<td>Alternative: search by name</td>
+</tr>
+<tr>
+<td><code>data</code></td>
+<td><code>str</code></td>
+<td><code>'all'</code></td>
+<td>Data subset to return</td>
+</tr>
+<tr>
+<td><code>language</code></td>
+<td><code>str</code></td>
+<td><code>None</code></td>
+<td>Preferred language</td>
+</tr>
+<tr>
+<td><code>rank</code></td>
+<td><code>str</code></td>
+<td><code>None</code></td>
+<td>Taxonomic rank filter</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<p>Dictionary with species details:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">{</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="mi">5219404</span><span class="p">,</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    <span class="s1">&#39;scientificName&#39;</span><span class="p">:</span> <span class="s1">&#39;Panthera leo (Linnaeus, 1758)&#39;</span><span class="p">,</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    <span class="s1">&#39;canonicalName&#39;</span><span class="p">:</span> <span class="s1">&#39;Panthera leo&#39;</span><span class="p">,</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>    <span class="s1">&#39;kingdom&#39;</span><span class="p">:</span> <span class="s1">&#39;Animalia&#39;</span><span class="p">,</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>    <span class="s1">&#39;phylum&#39;</span><span class="p">:</span> <span class="s1">&#39;Chordata&#39;</span><span class="p">,</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>    <span class="s1">&#39;class&#39;</span><span class="p">:</span> <span class="s1">&#39;Mammalia&#39;</span><span class="p">,</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>    <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="s1">&#39;Carnivora&#39;</span><span class="p">,</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>    <span class="s1">&#39;family&#39;</span><span class="p">:</span> <span class="s1">&#39;Felidae&#39;</span><span class="p">,</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>    <span class="s1">&#39;genus&#39;</span><span class="p">:</span> <span class="s1">&#39;Panthera&#39;</span><span class="p">,</span>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>    <span class="s1">&#39;species&#39;</span><span class="p">:</span> <span class="s1">&#39;Panthera leo&#39;</span><span class="p">,</span>
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>    <span class="s1">&#39;kingdomKey&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>    <span class="s1">&#39;phylumKey&#39;</span><span class="p">:</span> <span class="mi">44</span><span class="p">,</span>
+<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>    <span class="s1">&#39;classKey&#39;</span><span class="p">:</span> <span class="mi">359</span><span class="p">,</span>
+<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>    <span class="s1">&#39;orderKey&#39;</span><span class="p">:</span> <span class="mi">732</span><span class="p">,</span>
+<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>    <span class="s1">&#39;familyKey&#39;</span><span class="p">:</span> <span class="mi">9703</span><span class="p">,</span>
+<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>    <span class="s1">&#39;genusKey&#39;</span><span class="p">:</span> <span class="mi">2435194</span><span class="p">,</span>
+<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>    <span class="s1">&#39;speciesKey&#39;</span><span class="p">:</span> <span class="mi">5219404</span><span class="p">,</span>
+<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a>    <span class="s1">&#39;taxonomicStatus&#39;</span><span class="p">:</span> <span class="s1">&#39;ACCEPTED&#39;</span><span class="p">,</span>
+<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a>    <span class="s1">&#39;rank&#39;</span><span class="p">:</span> <span class="s1">&#39;SPECIES&#39;</span>
+<a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a><span class="p">}</span>
+</code></pre></div>
+<h5 id="gbif_geturl-str-args-dict-none-dict"><code>gbif_GET(url: str, args: dict = None) -&gt; dict</code><a class="headerlink" href="#gbif_geturl-str-args-dict-none-dict" title="Permanent link">&para;</a></h5>
+<p>Make a GET request to the GBIF API.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>url</code></td>
+<td><code>str</code></td>
+<td>Required</td>
+<td>Full API URL</td>
+</tr>
+<tr>
+<td><code>args</code></td>
+<td><code>dict</code></td>
+<td><code>None</code></td>
+<td>Query parameters</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<p>JSON response as dictionary</p>
+<p><strong>Raises:</strong></p>
+<ul>
+<li><code>GBIFNetworkError</code> on connection failure</li>
+<li><code>NoResultException</code> on empty response</li>
+</ul>
+<p><strong>Implementation:</strong></p>
+<ul>
+<li>Uses <code>QgsFileDownloader</code> for network requests</li>
+<li>Respects QGIS proxy settings</li>
+<li>Handles SSL certificates properly</li>
+</ul>
+<h3 id="exceptions">Exceptions<a class="headerlink" href="#exceptions" title="Permanent link">&para;</a></h3>
+<h5 id="noresultexception"><code>NoResultException</code><a class="headerlink" href="#noresultexception" title="Permanent link">&para;</a></h5>
+<p>Raised when GBIF returns no results.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">NoResultException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when GBIF API returns no results.&quot;&quot;&quot;</span>
+</code></pre></div>
+<h5 id="gbifnetworkerror"><code>GBIFNetworkError</code><a class="headerlink" href="#gbifnetworkerror" title="Permanent link">&para;</a></h5>
+<p>Raised for network/connection failures.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">GBIFNetworkError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when network request fails.&quot;&quot;&quot;</span>
+</code></pre></div>
+<hr />
+<h2 id="module-guikartoza_branding">Module: gui.kartoza_branding<a class="headerlink" href="#module-guikartoza_branding" title="Permanent link">&para;</a></h2>
+<h3 id="constants_1">Constants<a class="headerlink" href="#constants_1" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">KARTOZA_GREEN_DARK</span> <span class="o">=</span> <span class="s2">&quot;#589632&quot;</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">KARTOZA_GREEN_LIGHT</span> <span class="o">=</span> <span class="s2">&quot;#93b023&quot;</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">KARTOZA_GOLD</span> <span class="o">=</span> <span class="s2">&quot;#E8B849&quot;</span>
+</code></pre></div>
+<h3 id="class-kartozaheader">Class: KartozaHeader<a class="headerlink" href="#class-kartozaheader" title="Permanent link">&para;</a></h3>
+<p>Branded header widget with logo and title.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">KartozaHeader</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Header widget with Kartoza branding.&quot;&quot;&quot;</span>
+</code></pre></div>
+<p><strong>Constructor:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>    <span class="bp">self</span><span class="p">,</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Species Explorer&quot;</span><span class="p">,</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>    <span class="n">subtitle</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>    <span class="n">parent</span><span class="p">:</span> <span class="n">QWidget</span> <span class="o">=</span> <span class="kc">None</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="p">)</span>
+</code></pre></div>
+<h3 id="class-kartozafooter">Class: KartozaFooter<a class="headerlink" href="#class-kartozafooter" title="Permanent link">&para;</a></h3>
+<p>Branded footer widget with links.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">KartozaFooter</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Footer widget with Kartoza links.&quot;&quot;&quot;</span>
+</code></pre></div>
+<p><strong>Links Included:</strong></p>
+<ul>
+<li>Kartoza website</li>
+<li>Donate link</li>
+<li>GitHub repository</li>
+</ul>
+<h3 id="class-statuslabel">Class: StatusLabel<a class="headerlink" href="#class-statuslabel" title="Permanent link">&para;</a></h3>
+<p>Color-coded status display widget.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">StatusLabel</span><span class="p">(</span><span class="n">QLabel</span><span class="p">):</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Status label with color coding.&quot;&quot;&quot;</span>
+</code></pre></div>
+<p><strong>Methods:</strong></p>
+<h5 id="set_statusmessage-str-is_error-bool-false"><code>set_status(message: str, is_error: bool = False)</code><a class="headerlink" href="#set_statusmessage-str-is_error-bool-false" title="Permanent link">&para;</a></h5>
+<p>Update status message.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>message</code> - Text to display</li>
+<li><code>is_error</code> - If True, display in red; else green</li>
+</ul>
+<h3 id="functions_1">Functions<a class="headerlink" href="#functions_1" title="Permanent link">&para;</a></h3>
+<h5 id="apply_kartoza_stylingwidget-qwidget"><code>apply_kartoza_styling(widget: QWidget)</code><a class="headerlink" href="#apply_kartoza_stylingwidget-qwidget" title="Permanent link">&para;</a></h5>
+<p>Apply Kartoza QSS stylesheet to widget.</p>
+<h5 id="load_stylesheet-str"><code>load_stylesheet() -&gt; str</code><a class="headerlink" href="#load_stylesheet-str" title="Permanent link">&para;</a></h5>
+<p>Load stylesheet from resources.</p>
+<h5 id="get_resources_path-str"><code>get_resources_path() -&gt; str</code><a class="headerlink" href="#get_resources_path-str" title="Permanent link">&para;</a></h5>
+<p>Get path to resources directory.</p>
+<hr />
+<h2 id="constants_2">Constants<a class="headerlink" href="#constants_2" title="Permanent link">&para;</a></h2>
+<h3 id="gbif-api">GBIF API<a class="headerlink" href="#gbif-api" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="n">GBIF_BASE_URL</span> <span class="o">=</span> <span class="s2">&quot;https://api.gbif.org/v1&quot;</span>
+</code></pre></div>
+<h3 id="coordinate-reference-system">Coordinate Reference System<a class="headerlink" href="#coordinate-reference-system" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="n">DEFAULT_CRS</span> <span class="o">=</span> <span class="s2">&quot;EPSG:4326&quot;</span>  <span class="c1"># WGS 84</span>
+</code></pre></div>
+<h3 id="pagination">Pagination<a class="headerlink" href="#pagination" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="n">GBIF_PAGE_SIZE</span> <span class="o">=</span> <span class="mi">300</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="n">GBIF_MAX_OFFSET</span> <span class="o">=</span> <span class="mi">100000</span>
+</code></pre></div>
+<hr />
+<h2 id="events-and-callbacks">Events and Callbacks<a class="headerlink" href="#events-and-callbacks" title="Permanent link">&para;</a></h2>
+<h3 id="task-completion-pattern">Task Completion Pattern<a class="headerlink" href="#task-completion-pattern" title="Permanent link">&para;</a></h3>
+<p>The async fetcher uses a callback pattern for completion:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">on_task_finished</span><span class="p">(</span><span class="n">task</span><span class="p">:</span> <span class="n">GBIFFetchTask</span><span class="p">):</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle task completion.&quot;&quot;&quot;</span>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>    <span class="k">if</span> <span class="n">task</span><span class="o">.</span><span class="n">layer</span><span class="p">:</span>
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>        <span class="c1"># Success - layer is ready</span>
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>        <span class="n">QgsProject</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">addMapLayer</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">layer</span><span class="p">)</span>
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>    <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a>        <span class="c1"># Failure - check error</span>
+<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">task</span><span class="o">.</span><span class="n">error_message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>
+<a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a><span class="c1"># Connect callback</span>
+<a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a><span class="n">task</span> <span class="o">=</span> <span class="n">GBIFFetchTask</span><span class="p">(</span><span class="s2">&quot;Panthera leo&quot;</span><span class="p">)</span>
+<a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a><span class="n">task</span><span class="o">.</span><span class="n">taskCompleted</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">on_task_finished</span><span class="p">(</span><span class="n">task</span><span class="p">))</span>
+<a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a><span class="n">QgsApplication</span><span class="o">.</span><span class="n">taskManager</span><span class="p">()</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
+<h3 id="basic-species-search">Basic Species Search<a class="headerlink" href="#basic-species-search" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">species_explorer.gbifutils</span><span class="w"> </span><span class="kn">import</span> <span class="n">name_parser</span><span class="p">,</span> <span class="n">name_usage</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="c1"># Parse a species name</span>
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="n">parsed</span> <span class="o">=</span> <span class="n">name_parser</span><span class="p">(</span><span class="s2">&quot;Panthera leo&quot;</span><span class="p">)</span>
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Canonical: </span><span class="si">{</span><span class="n">parsed</span><span class="p">[</span><span class="s1">&#39;canonicalName&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a>
+<a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="c1"># Get species details by key</span>
+<a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a><span class="n">species</span> <span class="o">=</span> <span class="n">name_usage</span><span class="p">(</span><span class="mi">5219404</span><span class="p">)</span>
+<a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Kingdom: </span><span class="si">{</span><span class="n">species</span><span class="p">[</span><span class="s1">&#39;kingdom&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Family: </span><span class="si">{</span><span class="n">species</span><span class="p">[</span><span class="s1">&#39;family&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="fetch-occurrences-async">Fetch Occurrences Async<a class="headerlink" href="#fetch-occurrences-async" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">species_explorer.gbif_fetcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">fetch_species_async</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qgis.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">QgsProject</span>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="k">def</span><span class="w"> </span><span class="nf">handle_result</span><span class="p">(</span><span class="n">task</span><span class="p">):</span>
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>    <span class="k">if</span> <span class="n">task</span><span class="o">.</span><span class="n">layer</span><span class="p">:</span>
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>        <span class="n">QgsProject</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">addMapLayer</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">layer</span><span class="p">)</span>
+<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Added </span><span class="si">{</span><span class="n">task</span><span class="o">.</span><span class="n">layer</span><span class="o">.</span><span class="n">featureCount</span><span class="p">()</span><span class="si">}</span><span class="s2"> features&quot;</span><span class="p">)</span>
+<a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a>    <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">task</span><span class="o">.</span><span class="n">error_message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a>
+<a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a><span class="n">fetch_species_async</span><span class="p">(</span><span class="s2">&quot;Panthera leo&quot;</span><span class="p">,</span> <span class="n">handle_result</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="create-layer-manually">Create Layer Manually<a class="headerlink" href="#create-layer-manually" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qgis.core</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>    <span class="n">QgsVectorLayer</span><span class="p">,</span> <span class="n">QgsFeature</span><span class="p">,</span> <span class="n">QgsGeometry</span><span class="p">,</span>
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>    <span class="n">QgsPointXY</span><span class="p">,</span> <span class="n">QgsField</span><span class="p">,</span> <span class="n">QgsFields</span>
+<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="p">)</span>
+<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="kn">from</span><span class="w"> </span><span class="nn">PyQt5.QtCore</span><span class="w"> </span><span class="kn">import</span> <span class="n">QVariant</span>
+<a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a>
+<a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a><span class="c1"># Create memory layer</span>
+<a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a><span class="n">layer</span> <span class="o">=</span> <span class="n">QgsVectorLayer</span><span class="p">(</span>
+<a id="__codelineno-21-9" name="__codelineno-21-9" href="#__codelineno-21-9"></a>    <span class="s2">&quot;Point?crs=EPSG:4326&quot;</span><span class="p">,</span>
+<a id="__codelineno-21-10" name="__codelineno-21-10" href="#__codelineno-21-10"></a>    <span class="s2">&quot;Occurrences&quot;</span><span class="p">,</span>
+<a id="__codelineno-21-11" name="__codelineno-21-11" href="#__codelineno-21-11"></a>    <span class="s2">&quot;memory&quot;</span>
+<a id="__codelineno-21-12" name="__codelineno-21-12" href="#__codelineno-21-12"></a><span class="p">)</span>
+<a id="__codelineno-21-13" name="__codelineno-21-13" href="#__codelineno-21-13"></a>
+<a id="__codelineno-21-14" name="__codelineno-21-14" href="#__codelineno-21-14"></a><span class="c1"># Define fields</span>
+<a id="__codelineno-21-15" name="__codelineno-21-15" href="#__codelineno-21-15"></a><span class="n">fields</span> <span class="o">=</span> <span class="n">QgsFields</span><span class="p">()</span>
+<a id="__codelineno-21-16" name="__codelineno-21-16" href="#__codelineno-21-16"></a><span class="n">fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">QgsField</span><span class="p">(</span><span class="s1">&#39;gbifID&#39;</span><span class="p">,</span> <span class="n">QVariant</span><span class="o">.</span><span class="n">String</span><span class="p">))</span>
+<a id="__codelineno-21-17" name="__codelineno-21-17" href="#__codelineno-21-17"></a><span class="n">fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">QgsField</span><span class="p">(</span><span class="s1">&#39;scientificName&#39;</span><span class="p">,</span> <span class="n">QVariant</span><span class="o">.</span><span class="n">String</span><span class="p">))</span>
+<a id="__codelineno-21-18" name="__codelineno-21-18" href="#__codelineno-21-18"></a><span class="n">layer</span><span class="o">.</span><span class="n">dataProvider</span><span class="p">()</span><span class="o">.</span><span class="n">addAttributes</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
+<a id="__codelineno-21-19" name="__codelineno-21-19" href="#__codelineno-21-19"></a><span class="n">layer</span><span class="o">.</span><span class="n">updateFields</span><span class="p">()</span>
+<a id="__codelineno-21-20" name="__codelineno-21-20" href="#__codelineno-21-20"></a>
+<a id="__codelineno-21-21" name="__codelineno-21-21" href="#__codelineno-21-21"></a><span class="c1"># Add features</span>
+<a id="__codelineno-21-22" name="__codelineno-21-22" href="#__codelineno-21-22"></a><span class="k">for</span> <span class="n">occ</span> <span class="ow">in</span> <span class="n">occurrences</span><span class="p">:</span>
+<a id="__codelineno-21-23" name="__codelineno-21-23" href="#__codelineno-21-23"></a>    <span class="n">feature</span> <span class="o">=</span> <span class="n">QgsFeature</span><span class="p">()</span>
+<a id="__codelineno-21-24" name="__codelineno-21-24" href="#__codelineno-21-24"></a>    <span class="n">feature</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QgsGeometry</span><span class="o">.</span><span class="n">fromPointXY</span><span class="p">(</span>
+<a id="__codelineno-21-25" name="__codelineno-21-25" href="#__codelineno-21-25"></a>        <span class="n">QgsPointXY</span><span class="p">(</span>
+<a id="__codelineno-21-26" name="__codelineno-21-26" href="#__codelineno-21-26"></a>            <span class="nb">float</span><span class="p">(</span><span class="n">occ</span><span class="p">[</span><span class="s1">&#39;decimalLongitude&#39;</span><span class="p">]),</span>
+<a id="__codelineno-21-27" name="__codelineno-21-27" href="#__codelineno-21-27"></a>            <span class="nb">float</span><span class="p">(</span><span class="n">occ</span><span class="p">[</span><span class="s1">&#39;decimalLatitude&#39;</span><span class="p">])</span>
+<a id="__codelineno-21-28" name="__codelineno-21-28" href="#__codelineno-21-28"></a>        <span class="p">)</span>
+<a id="__codelineno-21-29" name="__codelineno-21-29" href="#__codelineno-21-29"></a>    <span class="p">))</span>
+<a id="__codelineno-21-30" name="__codelineno-21-30" href="#__codelineno-21-30"></a>    <span class="n">feature</span><span class="o">.</span><span class="n">setAttributes</span><span class="p">([</span>
+<a id="__codelineno-21-31" name="__codelineno-21-31" href="#__codelineno-21-31"></a>        <span class="n">occ</span><span class="p">[</span><span class="s1">&#39;gbifID&#39;</span><span class="p">],</span>
+<a id="__codelineno-21-32" name="__codelineno-21-32" href="#__codelineno-21-32"></a>        <span class="n">occ</span><span class="p">[</span><span class="s1">&#39;scientificName&#39;</span><span class="p">]</span>
+<a id="__codelineno-21-33" name="__codelineno-21-33" href="#__codelineno-21-33"></a>    <span class="p">])</span>
+<a id="__codelineno-21-34" name="__codelineno-21-34" href="#__codelineno-21-34"></a>    <span class="n">layer</span><span class="o">.</span><span class="n">dataProvider</span><span class="p">()</span><span class="o">.</span><span class="n">addFeature</span><span class="p">(</span><span class="n">feature</span><span class="p">)</span>
+<a id="__codelineno-21-35" name="__codelineno-21-35" href="#__codelineno-21-35"></a>
+<a id="__codelineno-21-36" name="__codelineno-21-36" href="#__codelineno-21-36"></a><span class="n">layer</span><span class="o">.</span><span class="n">updateExtents</span><span class="p">()</span>
+</code></pre></div>
+<hr />
+<p>Made with 💗 by <a href="https://kartoza.com">Kartoza</a> | <a href="https://github.com/sponsors/timlinux">Donate</a> | <a href="https://github.com/kartoza/SpeciesExplorer">GitHub</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2024 <a href="https://kartoza.com" target="_blank">Kartoza</a>
+| Made with 💗 by Kartoza
+| <a href="https://github.com/sponsors/timlinux">Donate</a>
+
+    </div>
+  
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/kartoza/SpeciesExplorer" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/kartaborneo" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M459.4 151.7c.3 4.5.3 9.1.3 13.6 0 138.7-105.6 298.6-298.6 298.6-59.5 0-114.7-17.2-161.1-47.1 8.4 1 16.6 1.3 25.3 1.3 49.1 0 94.2-16.6 130.3-44.8-46.1-1-84.8-31.2-98.1-72.8 6.5 1 13 1.6 19.8 1.6 9.4 0 18.8-1.3 27.6-3.6-48.1-9.7-84.1-52-84.1-103v-1.3c14 7.8 30.2 12.7 47.4 13.3-28.3-18.8-46.8-51-46.8-87.4 0-19.5 5.2-37.4 14.3-53C87.4 130.8 165 172.4 252.1 176.9c-1.6-7.8-2.6-15.9-2.6-24C249.5 95.1 296.3 48 354.4 48c30.2 0 57.5 12.7 76.7 33.1 23.7-4.5 46.5-13.3 66.6-25.3-7.8 24.4-24.4 44.8-46.1 57.8 21.1-2.3 41.6-8.1 60.4-16.2-14.3 20.8-32.2 39.3-52.6 54.3"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://kartoza.com" target="_blank" rel="noopener" title="kartoza.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.top", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "content.action.edit"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
