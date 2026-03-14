@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env bash
 echo "Export the plugin to a zip with no .git folder"
 echo "And build a windows installer"
 
 
-VERSION=`cat metadata.txt | grep ^version | sed 's/version=//g'`
-STATUS=`cat metadata.txt | grep ^status | sed 's/status=//g'`
+VERSION=`cat species_explorer/metadata.txt | grep ^version | sed 's/version=//g'`
+STATUS=`cat species_explorer/metadata.txt | grep ^status | sed 's/status=//g'`
 
 if [ "${STATUS}" != "final" ]; then
     VERSION="${VERSION}.${STATUS}"

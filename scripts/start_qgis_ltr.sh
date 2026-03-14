@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Species Explorer - QGIS launcher (current release)
+# Species Explorer - QGIS LTR launcher
 # Uses Ivan Mincik's geospatial-nix.repo via flake
 
-echo "🦎 Running QGIS with the SpeciesExplorer profile:"
+echo "🦎 Running QGIS LTR with the SpeciesExplorer profile:"
 echo "--------------------------------"
 
 # Change to project root
@@ -13,18 +13,6 @@ PLUGIN_NAME="SpeciesExplorer"
 QGIS_PROFILE="${QGIS_PROFILE:-SpeciesExplorer}"
 SPECIES_EXPLORER_LOG=$HOME/SpeciesExplorer.log
 SPECIES_EXPLORER_TEST_DIR="$(pwd)/test"
-
-# Check if gum is available for interactive menu
-if command -v gum &> /dev/null; then
-    echo "Do you want to enable debug mode?"
-    choice=$(gum choose "Yes" "No")
-    case $choice in
-        "Yes") debug_mode=1 ;;
-        "No") debug_mode=0 ;;
-    esac
-else
-    debug_mode=0
-fi
 
 # Clear previous log
 rm -f "$SPECIES_EXPLORER_LOG"
@@ -38,10 +26,9 @@ if [ ! -L "$PLUGIN_DIR" ] && [ ! -d "$PLUGIN_DIR" ]; then
     echo "Created symlink: $PLUGIN_DIR"
 fi
 
-# Launch QGIS via nix flake
-# Uses geospatial-nix.repo for QGIS current release
+# Launch QGIS LTR via nix flake
+# Uses geospatial-nix.repo for QGIS LTR version
 SPECIES_EXPLORER_LOG=${SPECIES_EXPLORER_LOG} \
-    SPECIES_EXPLORER_DEBUG=${debug_mode} \
     SPECIES_EXPLORER_TEST_DIR=${SPECIES_EXPLORER_TEST_DIR} \
     RUNNING_ON_LOCAL=1 \
-    nix run .#default -- --profile "$QGIS_PROFILE"
+    nix run .#qgis-ltr -- --profile "$QGIS_PROFILE"

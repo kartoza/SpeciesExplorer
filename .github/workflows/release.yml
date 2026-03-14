@@ -46,7 +46,7 @@ jobs:
 
       - name: Update metadata version
         run: |
-          sed -i "s/^version=.*/version=${{ steps.version.outputs.version }}/" metadata.txt
+          sed -i "s/^version=.*/version=${{ steps.version.outputs.version }}/" species_explorer/metadata.txt
 
       - name: Build plugin package
         run: |
@@ -56,9 +56,8 @@ jobs:
           # Create plugin directory structure
           mkdir -p build/${PLUGIN_NAME}
 
-          # Copy plugin files
+          # Copy plugin files (metadata.txt is already in species_explorer/)
           cp -r species_explorer/* build/${PLUGIN_NAME}/
-          cp metadata.txt build/${PLUGIN_NAME}/
           cp LICENSE build/${PLUGIN_NAME}/ 2>/dev/null || cp COPYING build/${PLUGIN_NAME}/ 2>/dev/null || true
 
           # Remove unnecessary files

@@ -112,8 +112,7 @@ deploy: compile
 	mkdir -p $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
 	cp -vf $(PLUGINDIR)/*.py $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)/
 	cp -vf $(PLUGINDIR)/*.ui $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)/
-	# metadata.txt is in root dir
-	cp -vf metadata.txt $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)/
+	cp -vf $(PLUGINDIR)/metadata.txt $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)/
 	cp -vf $(PLUGINDIR)/icon.png $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)/
 	# Copy subdirectories
 	cp -vfr $(PLUGINDIR)/gui $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)/

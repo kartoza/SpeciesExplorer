@@ -64,7 +64,7 @@ class GBIFFetchTask(QgsTask):
         self.error_message: str = ""
         self.record_count: int = 0
         self._on_finished = on_finished
-        self._features: List[QgsFeature] = []
+        self._records_data: List[Dict[str, Any]] = []  # Store raw record data
         self._field_names: List[str] = []
         self._total_count: int = 0
 
@@ -178,7 +178,7 @@ class GBIFFetchTask(QgsTask):
             return None
 
     def _process_records(self, records: List[Dict[str, Any]]) -> None:
-        """Process occurrence records into features.
+        """Process occurrence records into raw data for later feature creation.
 
         Args:
             records: List of GBIF occurrence records.
@@ -191,26 +191,22 @@ class GBIFFetchTask(QgsTask):
             if "decimalLongitude" not in record or "decimalLatitude" not in record:
                 continue
 
+            try:
+                lon = float(record["decimalLongitude"])
+                lat = float(record["decimalLatitude"])
+            except (ValueError, TypeError):
+                continue
+
             # Initialize field names from first valid record
             if not self._field_names:
                 self._field_names = list(record.keys())
 
-            feature = QgsFeature()
-            feature.setGeometry(
-                QgsGeometry.fromPointXY(
-                    QgsPointXY(record["decimalLongitude"], record["decimalLatitude"])
-                )
-            )
-
-            # Build attributes list
-            attributes = []
-            for key in self._field_names:
-                value = record.get(key, "")
-                # Convert to string for consistency
-                attributes.append(str(value) if value is not None else "")
-
-            feature.setAttributes(attributes)
-            self._features.append(feature)
+            # Store raw data - we'll create features later with proper field mapping
+            self._records_data.append({
+                "lon": lon,
+                "lat": lat,
+                "attributes": record,
+            })
             self.record_count += 1
 
     def finished(self, result: bool) -> None:
@@ -219,32 +215,131 @@ class GBIFFetchTask(QgsTask):
         Args:
             result: True if task succeeded.
         """
-        if result and self._features:
+        QgsMessageLog.logMessage(
+            f"finished() called: result={result}, records_data_len={len(self._records_data)}, "
+            f"record_count={self.record_count}, field_names_len={len(self._field_names)}",
+            "SpeciesExplorer",
+            level=0,
+        )
+
+        if result and self._records_data:
             self._create_layer()
+        elif not result:
+            QgsMessageLog.logMessage(
+                f"Task did not succeed: {self.error_message}",
+                "SpeciesExplorer",
+                level=2,
+            )
+        elif not self._records_data:
+            QgsMessageLog.logMessage(
+                "No records data available despite record_count > 0",
+                "SpeciesExplorer",
+                level=2,
+            )
 
         if self._on_finished:
             self._on_finished(self)
 
     def _create_layer(self) -> None:
-        """Create vector layer from fetched features."""
-        # Create layer with fields
-        self.layer = QgsVectorLayer("Point", self.species_name, "memory")
-        self.layer.setCrs(QgsCoordinateReferenceSystem("EPSG:4326"))
+        """Create vector layer from fetched data."""
+        QgsMessageLog.logMessage(
+            f"_create_layer called with {len(self._records_data)} records, {len(self._field_names)} fields",
+            "SpeciesExplorer",
+            level=0,
+        )
+
+        # Sanitize field names (remove special chars, limit length)
+        safe_field_names = []
+        for name in self._field_names:
+            safe_name = "".join(c if c.isalnum() or c == "_" else "_" for c in name)
+            safe_name = safe_name[:60]  # Limit field name length
+            if not safe_name:
+                safe_name = "field"
+            safe_field_names.append(safe_name)
+
+        # Build field definitions for URI
+        field_defs = "&".join([f"field={name}:string(255)" for name in safe_field_names])
+        uri = f"Point?crs=EPSG:4326&{field_defs}"
+
+        QgsMessageLog.logMessage(
+            f"Creating layer with URI (first 200 chars): {uri[:200]}...",
+            "SpeciesExplorer",
+            level=0,
+        )
+
+        # Create layer with fields in URI
+        self.layer = QgsVectorLayer(uri, self.species_name, "memory")
+
+        if not self.layer.isValid():
+            QgsMessageLog.logMessage(
+                "Failed to create valid memory layer!",
+                "SpeciesExplorer",
+                level=2,
+            )
+            return
 
         provider = self.layer.dataProvider()
+        if provider is None:
+            QgsMessageLog.logMessage(
+                "Failed to get data provider!",
+                "SpeciesExplorer",
+                level=2,
+            )
+            return
 
-        # Add fields
-        fields = []
-        for name in self._field_names:
-            field = QgsField(name, QVariant.String)
-            field.setLength(255)
-            fields.append(field)
+        QgsMessageLog.logMessage(
+            f"Layer has {self.layer.fields().count()} fields, provider caps: {provider.capabilities()}",
+            "SpeciesExplorer",
+            level=0,
+        )
 
-        provider.addAttributes(fields)
-        self.layer.updateFields()
+        # Create features with proper field mapping
+        layer_fields = self.layer.fields()
+        features = []
+        for i, record_data in enumerate(self._records_data):
+            feature = QgsFeature(layer_fields)
+            geom = QgsGeometry.fromPointXY(
+                QgsPointXY(record_data["lon"], record_data["lat"])
+            )
+            feature.setGeometry(geom)
 
-        # Add features
-        provider.addFeatures(self._features)
+            # Build attributes list in field order
+            attributes = []
+            for orig_name in self._field_names:
+                value = record_data["attributes"].get(orig_name, "")
+                attributes.append(str(value) if value is not None else "")
+
+            feature.setAttributes(attributes)
+            features.append(feature)
+
+            # Log first feature for debugging
+            if i == 0:
+                QgsMessageLog.logMessage(
+                    f"First feature: geom_valid={geom.isGeosValid()}, attrs_count={len(attributes)}, "
+                    f"field_count={layer_fields.count()}",
+                    "SpeciesExplorer",
+                    level=0,
+                )
+
+        # Add features using data provider
+        QgsMessageLog.logMessage(
+            f"Adding {len(features)} features to provider...",
+            "SpeciesExplorer",
+            level=0,
+        )
+
+        # Start editing, add features, commit
+        self.layer.startEditing()
+        for feature in features:
+            self.layer.addFeature(feature)
+        commit_success = self.layer.commitChanges()
+
+        QgsMessageLog.logMessage(
+            f"commitChanges result: {commit_success}, layer feature count: {self.layer.featureCount()}",
+            "SpeciesExplorer",
+            level=0,
+        )
+
         self.layer.updateExtents()
 
     def cancel(self) -> None:

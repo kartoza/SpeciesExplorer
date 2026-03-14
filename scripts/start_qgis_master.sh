@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
-# Species Explorer - QGIS launcher (current release)
-# Uses Ivan Mincik's geospatial-nix.repo via flake
+# Species Explorer - QGIS Master (development) launcher
+# Uses QGIS upstream flake for latest development version
 
-echo "🦎 Running QGIS with the SpeciesExplorer profile:"
+echo "🦎 Running QGIS Master (dev) with the SpeciesExplorer profile:"
 echo "--------------------------------"
+echo "⚠️  Warning: This is the development version of QGIS and may be unstable"
+echo ""
 
 # Change to project root
 cd "$(dirname "$0")/.."
@@ -13,18 +15,6 @@ PLUGIN_NAME="SpeciesExplorer"
 QGIS_PROFILE="${QGIS_PROFILE:-SpeciesExplorer}"
 SPECIES_EXPLORER_LOG=$HOME/SpeciesExplorer.log
 SPECIES_EXPLORER_TEST_DIR="$(pwd)/test"
-
-# Check if gum is available for interactive menu
-if command -v gum &> /dev/null; then
-    echo "Do you want to enable debug mode?"
-    choice=$(gum choose "Yes" "No")
-    case $choice in
-        "Yes") debug_mode=1 ;;
-        "No") debug_mode=0 ;;
-    esac
-else
-    debug_mode=0
-fi
 
 # Clear previous log
 rm -f "$SPECIES_EXPLORER_LOG"
@@ -38,10 +28,9 @@ if [ ! -L "$PLUGIN_DIR" ] && [ ! -d "$PLUGIN_DIR" ]; then
     echo "Created symlink: $PLUGIN_DIR"
 fi
 
-# Launch QGIS via nix flake
-# Uses geospatial-nix.repo for QGIS current release
+# Launch QGIS Master via nix flake
+# Uses QGIS upstream repository for latest development version
 SPECIES_EXPLORER_LOG=${SPECIES_EXPLORER_LOG} \
-    SPECIES_EXPLORER_DEBUG=${debug_mode} \
     SPECIES_EXPLORER_TEST_DIR=${SPECIES_EXPLORER_TEST_DIR} \
     RUNNING_ON_LOCAL=1 \
-    nix run .#default -- --profile "$QGIS_PROFILE"
+    nix run .#qgis-master -- --profile "$QGIS_PROFILE"

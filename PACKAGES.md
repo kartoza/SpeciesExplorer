@@ -9,21 +9,32 @@ This document provides an annotated list of all packages and modules in the Spec
 ## Package Structure
 
 ```
-SpeciesExplorer/
-├── species_explorer/          # Main plugin package
-│   ├── __init__.py           # Plugin entry point
-│   ├── species_explorer.py   # Main plugin class
-│   ├── species_explorer_dialog.py      # Dialog UI logic
-│   ├── species_explorer_dialog_base.ui # Qt Designer UI
-│   ├── gbifutils.py          # GBIF API utilities
-│   ├── resources.py          # Compiled Qt resources
-│   ├── resources.qrc         # Qt resource definitions
-│   └── icon.png              # Plugin icon
-├── test/                      # Test suite
-├── docs/                      # MkDocs documentation
-├── scripts/                   # Helper scripts
-└── metadata.txt              # QGIS plugin metadata
+SpeciesExplorer/                   # Project root (development files)
+├── species_explorer/              # Deployable plugin package (all QGIS plugin code here)
+│   ├── __init__.py               # Plugin entry point (classFactory)
+│   ├── metadata.txt              # QGIS plugin metadata
+│   ├── species_explorer.py       # Main plugin class
+│   ├── species_explorer_dialog.py        # Dialog UI logic
+│   ├── species_explorer_dialog_base.ui   # Qt Designer UI
+│   ├── gbif_fetcher.py           # Async GBIF fetcher using QgsTask
+│   ├── gbifutils.py              # GBIF API utilities
+│   ├── resources.py              # Compiled Qt resources
+│   ├── resources.qrc             # Qt resource definitions
+│   ├── icon.png                  # Plugin icon
+│   ├── gui/                      # GUI utilities
+│   │   └── kartoza_branding.py   # Kartoza branding components
+│   └── resources/                # Static resources
+│       └── styles/kartoza.qss    # Custom stylesheet
+├── test/                          # Test suite (not deployed)
+├── docs/                          # MkDocs documentation (not deployed)
+├── scripts/                       # Helper scripts (not deployed)
+├── admin.py                       # Plugin administration tool
+├── Makefile                       # Legacy build targets
+└── flake.nix                      # Nix development environment
 ```
+
+**Note:** Only the `species_explorer/` folder is deployed to QGIS. All other files are for development purposes only.
+
 
 ---
 
@@ -204,9 +215,11 @@ pytest test/ -v --cov=species_explorer
 
 ## Configuration Files
 
-### `metadata.txt`
+### `species_explorer/metadata.txt`
 
 **Purpose:** QGIS plugin metadata.
+
+**Location:** Inside the plugin folder so it's deployed with the plugin.
 
 **Key Fields:**
 - `name` - Plugin display name

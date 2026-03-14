@@ -117,3 +117,7 @@ venv.bak/
 # mypy
 .mypy_cache/
 PROMPT.log
+
+# Build artifacts
+*.zip
+screenshot*.png

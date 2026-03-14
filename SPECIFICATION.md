@@ -109,6 +109,39 @@ Species Explorer is a QGIS plugin that enables users to search, fetch, and visua
 
 ---
 
+## Project Structure
+
+The project is organized with a clear separation between deployable plugin code and development files:
+
+```
+SpeciesExplorer/                   # Project root
+├── species_explorer/              # DEPLOYABLE PLUGIN (this folder is what QGIS loads)
+│   ├── __init__.py               # Plugin entry point (classFactory)
+│   ├── metadata.txt              # QGIS plugin metadata
+│   ├── species_explorer.py       # Main plugin class
+│   ├── species_explorer_dialog.py
+│   ├── species_explorer_dialog_base.ui
+│   ├── gbif_fetcher.py           # Async GBIF fetcher
+│   ├── gbifutils.py              # GBIF utilities
+│   ├── resources.py              # Compiled Qt resources
+│   ├── icon.png
+│   ├── gui/                      # GUI utilities
+│   └── resources/                # Static resources
+├── test/                          # Tests (not deployed)
+├── docs/                          # Documentation (not deployed)
+├── scripts/                       # Helper scripts (not deployed)
+├── admin.py                       # Build/deploy tool
+└── flake.nix                      # Development environment
+```
+
+**Key Points:**
+- The `species_explorer/` folder contains ALL deployable plugin code
+- QGIS loads the plugin from `species_explorer/` (symlinked during development)
+- `metadata.txt` is inside `species_explorer/` where QGIS expects it
+- Development files (tests, docs, scripts) remain at project root
+
+---
+
 ## Architecture
 
 ### System Context
