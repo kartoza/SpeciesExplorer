@@ -117,6 +117,8 @@ nav:
       - Quick Start: user-guide/quickstart.md
       - Usage: user-guide/usage.md
       - FAQ: user-guide/faq.md
+  - Administrator Guide:
+      - admin/index.md
   - Developer Guide:
       - developer/index.md
       - Setup: developer/setup.md
